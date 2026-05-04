@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESOLATION | Гнев Богов</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .orbitron { font-family: 'Orbitron', sans-serif; }
+        .red-glow {
+            text-shadow: 0 0 10px rgba(255, 45, 0, 0.7), 0 0 20px rgba(255, 45, 0, 0.5);
+        }
+        .card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid #1a1a1a;
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+        }
+        .card:hover {
+            border-color: #ff2d00;
+            box-shadow: 0 0 30px rgba(255, 45, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #ff2d00, #991b1b);
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 20px #ff2d00;
+            transform: scale(1.05);
+        }
+        /* Анимация заднего фона */
+        .bg-lines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,45,0,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,45,0,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-lines"></div>
+
+    <div class="min-h-screen flex flex-col items-center justify-center px-4">
+        <div class="text-center mb-12">
+            <h1 class="orbitron text-6xl md:text-8xl font-bold tracking-widest mb-4 red-glow">
+                DESO<span class="text-red-600">LATION</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl tracking-widest uppercase">Next-Generation Software</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
+            <div class="card p-8 rounded-2xl text-center">
+                <div class="text-red-500 text-4xl mb-4 font-bold">01</div>
+                <h3 class="orbitron text-xl mb-2">UNDEТECTED</h3>
+                <p class="text-gray-500 text-sm">Уникальные методы обхода на уровне ядра системы.</p>
+            </div>
+            <div class="card p-8 rounded-2xl text-center border-red-900">
+                <div class="text-red-500 text-4xl mb-4 font-bold">02</div>
+                <h3 class="orbitron text-xl mb-2">STABILITY</h3>
+                <p class="text-gray-500 text-sm">Никаких крашей и просадок FPS. Полная оптимизация.</p>
+            </div>
+            <div class="card p-8 rounded-2xl text-center">
+                <div class="text-red-500 text-4xl mb-4 font-bold">03</div>
+                <h3 class="orbitron text-xl mb-2">SUPPORT</h3>
+                <p class="text-gray-500 text-sm">Круглосуточная помощь и быстрая настройка.</p>
+            </div>
+        </div>
+
+        <div class="mt-16 flex flex-col md:flex-row gap-6">
+            <a href="https://t.me/твой_канал" class="btn-primary px-12 py-4 rounded-full orbitron font-bold text-center">
+                КУПИТЬ (TELEGRAM)
+            </a>
+            <a href="https://discord.gg/твой_сервер" class="border border-gray-700 hover:bg-white hover:text-black px-12 py-4 rounded-full orbitron font-bold transition duration-300 text-center">
+                DISCORD
+            </a>
+        </div>
+        
+        <p class="mt-12 text-gray-600 text-xs uppercase tracking-widest">Designed for Winners</p>
+    </div>
+</body>
+</html>
