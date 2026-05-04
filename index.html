@@ -2,144 +2,118 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESOLATION | PRIVATE ARCHIVE</title>
-    
+    <title>DESOLATION</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Syne:wght@400;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
 
         :root { 
-            --accent: #ff0055; 
-            --bg: #030303; 
-            --card-bg: #080808;
-            --border: #151515; 
+            --accent: #ffb6c1; /* Pastel Pink */
+            --bg: #050505; 
+            --card: #0a0a0a;
+            --brd: #1a1a1a; 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; cursor: crosshair; }
-        body { background: var(--bg); color: #fff; font-family: 'Syne', sans-serif; overflow-x: hidden; }
+        body { background: var(--bg); color: #fff; font-family: 'Arial', sans-serif; overflow-x: hidden; }
 
-        /* АККУРАТНЫЙ ПЕРИОДИЧЕСКИЙ ГЛИТЧ */
+        /* Аккуратный редкий глитч раз в 5 секунд */
         @keyframes subtle-glitch {
-            0%, 90%, 100% { transform: translate(0); opacity: 1; }
-            92% { transform: translate(-2px, 1px); opacity: 0.8; text-shadow: 2px 0 var(--accent); }
-            94% { transform: translate(2px, -1px); opacity: 1; text-shadow: -2px 0 #00fffb; }
-            96% { transform: translate(-1px, 0); }
+            0%, 94%, 100% { transform: none; text-shadow: none; }
+            95% { transform: translate(-1px, 1px); text-shadow: 1px 0 var(--accent); }
+            97% { transform: translate(1px, -1px); text-shadow: -1px 0 #fff; }
         }
-        .glitch-text { animation: subtle-glitch 5s infinite; }
+        .glitch { animation: subtle-glitch 5s infinite; }
 
         nav {
-            position: fixed; top: 0; width: 100%; padding: 20px 40px;
+            position: fixed; top: 0; width: 100%; padding: 20px 50px;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(3,3,3,0.95); backdrop-filter: blur(10px);
-            z-index: 1000; border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--brd); background: var(--bg); z-index: 100;
         }
-        .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 5px; font-size: 1.2rem; }
-        .nav-btns { display: flex; gap: 15px; }
 
+        .logo { font-family: 'Orbitron'; font-weight: 900; letter-spacing: 4px; font-size: 1.1rem; }
+        .nav-link { color: #555; text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; margin-left: 20px; transition: 0.3s; cursor: pointer; }
+        .nav-link:hover { color: var(--accent); }
+
+        /* Auth */
         #auth-screen {
             position: fixed; inset: 0; background: var(--bg);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999; transition: 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
-        .auth-card { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; width: 380px; text-align: center; }
-        input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px; color: #fff; margin-bottom: 12px; font-family: monospace; font-size: 0.8rem; }
+        .auth-box { background: var(--card); border: 1px solid var(--brd); padding: 40px; width: 350px; text-align: center; }
+        input { width: 100%; background: #000; border: 1px solid var(--brd); padding: 12px; color: #fff; margin-bottom: 10px; font-family: monospace; }
         input:focus { border-color: var(--accent); }
-        
-        .main-btn { width: 100%; padding: 12px; background: var(--accent); border: none; color: #000; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.7rem; letter-spacing: 1px; }
-        .main-btn:hover { box-shadow: 0 0 20px var(--accent); transform: translateY(-2px); }
+        .btn { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; font-size: 0.7rem; }
 
-        main { display: none; opacity: 0; flex-direction: column; align-items: center; padding: 120px 20px; transition: 0.8s; }
+        /* Main Content */
+        main { display: none; opacity: 0; transition: 0.5s; padding: 120px 20px; flex-direction: column; align-items: center; }
         
-        /* СЕКЦИЯ ПРОФИЛЯ */
-        #profile-section { display: none; width: 100%; max-width: 700px; background: var(--card-bg); border: 1px solid var(--border); padding: 30px; margin-top: 20px; position: relative; }
-        .profile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .info-item { background: #000; padding: 15px; border: 1px solid #111; }
-        .label { font-size: 0.6rem; color: #444; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-        .value { font-family: 'Orbitron'; font-size: 0.9rem; color: #fff; }
+        .profile-card {
+            background: var(--card); border: 1px solid var(--brd); padding: 30px; 
+            width: 100%; max-width: 600px; display: none; margin-top: 20px;
+        }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .stat-item { background: #000; padding: 15px; border: 1px solid #111; }
+        .label { font-size: 0.6rem; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+        .val { font-family: 'Orbitron'; font-size: 0.8rem; margin-top: 5px; }
 
-        .invite-list { margin-top: 20px; max-height: 150px; overflow-y: auto; font-family: monospace; font-size: 0.75rem; color: var(--accent); background: #000; padding: 10px; border: 1px solid #111; }
+        .inv-list { margin-top: 15px; background: #000; padding: 10px; font-family: monospace; font-size: 0.7rem; color: var(--accent); border: 1px solid #111; max-height: 100px; overflow-y: auto; }
         
-        /* Кнопка смены ника для ryodeu */
-        #rename-btn { background: none; border: 1px solid #333; color: #555; padding: 2px 8px; font-size: 0.6rem; margin-left: 10px; cursor: pointer; }
-        #rename-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .rename-btn { background: none; border: 1px solid #333; color: #333; font-size: 0.5rem; padding: 2px 5px; cursor: pointer; margin-left: 10px; }
+        .rename-btn:hover { border-color: var(--accent); color: var(--accent); }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="nav-logo glitch-text">0000X1 // DESOLATION</div>
-        <div class="nav-btns">
-            <button class="tg-link" style="background:none; border:1px solid #222; color:#fff; cursor:pointer; padding:5px 15px;" onclick="showTab('main')">MAIN</button>
-            <button class="tg-link" style="background:none; border:1px solid #222; color:#fff; cursor:pointer; padding:5px 15px;" onclick="showTab('profile')">PROFILE</button>
+        <div class="logo glitch">DESOLATION</div>
+        <div>
+            <span class="nav-link" onclick="toggleTab('main')">MAIN</span>
+            <span class="nav-link" onclick="toggleTab('prof')">PROFILE</span>
         </div>
     </nav>
 
     <section id="auth-screen">
-        <div class="auth-card" id="login-box">
-            <h2 class="glitch-text" style="margin-bottom:25px; letter-spacing:5px;">ACCESS</h2>
-            <input type="text" id="l-user" placeholder="LOGIN">
-            <input type="password" id="l-pass" placeholder="PASSWORD">
-            <button class="main-btn" onclick="login()">Enter System</button>
-            <p style="margin-top:20px; font-size:0.6rem; color:#333; cursor:pointer" onclick="toggleAuth()">NO_ACCOUNT? REGISTER</p>
+        <div class="auth-box" id="l-box">
+            <h3 style="margin-bottom:20px; font-family:'Orbitron';">LOGIN</h3>
+            <input type="text" id="l-u" placeholder="USERNAME">
+            <input type="password" id="l-p" placeholder="PASSWORD">
+            <button class="btn" onclick="login()">LOGIN</button>
+            <p style="font-size:0.5rem; color:#333; margin-top:15px; cursor:pointer;" onclick="swap()">REGISTER</p>
         </div>
-
-        <div class="auth-card" id="reg-box" style="display:none">
-            <h2 class="glitch-text" style="margin-bottom:25px; letter-spacing:5px;">INITIALIZE</h2>
-            <input type="text" id="r-user" placeholder="NEW_LOGIN">
-            <input type="password" id="r-pass" placeholder="NEW_PASSWORD">
-            <input type="text" id="r-inv" placeholder="INVITE_CODE">
-            <button class="main-btn" onclick="register()">Create Identity</button>
-            <p style="margin-top:20px; font-size:0.6rem; color:#333; cursor:pointer" onclick="toggleAuth()">BACK_TO_LOGIN</p>
+        <div class="auth-box" id="r-box" style="display:none;">
+            <h3 style="margin-bottom:20px; font-family:'Orbitron';">REGISTER</h3>
+            <input type="text" id="r-u" placeholder="USERNAME">
+            <input type="password" id="r-p" placeholder="PASSWORD">
+            <input type="text" id="r-i" placeholder="INVITE CODE">
+            <button class="btn" onclick="reg()">CREATE</button>
+            <p style="font-size:0.5rem; color:#333; margin-top:15px; cursor:pointer;" onclick="swap()">BACK</p>
         </div>
     </section>
 
-    <main id="main-content">
-        <div id="profile-section">
-            <div class="profile-header">
-                <div>
-                    <span class="label">Identity</span><br>
-                    <span class="value" id="p-username">---</span>
-                    <button id="rename-btn" style="display:none" onclick="changeNickname()">RENAME</button>
-                </div>
-                <div style="text-align:right">
-                    <span class="label">Status</span><br>
-                    <span class="value" style="color:var(--accent)">PREMIUM_USER</span>
-                </div>
-            </div>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="label">Subscription_Expires</div>
-                    <div class="value" id="p-sub">PERMANENT</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Invited_By</div>
-                    <div class="value" id="p-invited-by">SYSTEM</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Monthly_Limit</div>
-                    <div class="value" id="p-limit">0 / 2</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">Member_Since</div>
-                    <div class="value" id="p-joined">01.01.2026</div>
-                </div>
-            </div>
-
-            <div style="margin-top:25px;">
-                <div class="label">Your_Invite_Pool</div>
-                <div id="user-invites" class="invite-list">EMPTY</div>
-                <button id="gen-btn" class="main-btn" style="margin-top:15px; background:#111; color:#fff; border:1px solid var(--border);" onclick="generateUserInvite()">GENERATE_NEW_IDENTITY_KEY</button>
-            </div>
+    <main id="content">
+        <div id="main-view" style="text-align:center;">
+            <h1 class="glitch" style="font-family:'Orbitron'; font-size:3rem; letter-spacing:10px;">DESOLATION</h1>
+            <p style="color:#444; letter-spacing:5px; font-size:0.7rem;">ARCHIVE BASED MODIFICATION</p>
         </div>
 
-        <div id="main-tab" style="text-align:center; margin-top:50px;">
-            <h1 style="font-size:4rem; letter-spacing:20px; font-family:'Orbitron';" class="glitch-text">BANKROLL</h1>
-            <p style="color:var(--accent); letter-spacing:8px; font-size:0.8rem;">MAFIA_EDITION // BY RYODEU</p>
+        <div id="prof-view" class="profile-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #1a1a1a; padding-bottom:10px;">
+                <h2 style="font-family:'Orbitron'; font-size:0.9rem;">IDENTITY: <span id="disp-u">---</span> <button id="edit-n" class="rename-btn" style="display:none;" onclick="rename()">RENAME</button></h2>
+                <span id="p-status" style="font-size:0.6rem; color:var(--accent);">AUTHORIZED</span>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-item"><div class="label">Sub Status</div><div class="val" id="p-sub">Active</div></div>
+                <div class="stat-item"><div class="label">Invited By</div><div class="val" id="p-by">System</div></div>
+                <div class="stat-item"><div class="label">Monthly Limit</div><div class="val" id="p-lim">0 / 2</div></div>
+                <div class="stat-item"><div class="label">Member Since</div><div class="val" id="p-date">--.--.--</div></div>
+            </div>
+            <div style="margin-top:20px;">
+                <div class="label">Invite History</div>
+                <div id="p-invs" class="inv-list">EMPTY</div>
+                <button class="btn" style="margin-top:10px; background:#111; color:#fff; border:1px solid #222;" onclick="genInv()">GENERATE RANDOM KEY</button>
+            </div>
         </div>
     </main>
 
@@ -153,123 +127,78 @@
             messagingSenderId: "437522470275",
             appId: "1:437522470275:web:5b20d57e9907100ec712b6"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        let currentUser = null;
-        let currentUID = "";
+        let user = null; let uid = "";
 
-        function toggleAuth() {
-            document.getElementById('login-box').style.display = document.getElementById('login-box').style.display === 'none' ? 'block' : 'none';
-            document.getElementById('reg-box').style.display = document.getElementById('reg-box').style.display === 'none' ? 'block' : 'none';
+        function swap() {
+            document.getElementById('l-box').style.display = document.getElementById('l-box').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('r-box').style.display = document.getElementById('r-box').style.display === 'none' ? 'block' : 'none';
         }
 
-        function showTab(tab) {
-            document.getElementById('main-tab').style.display = tab === 'main' ? 'block' : 'none';
-            document.getElementById('profile-section').style.display = tab === 'profile' ? 'block' : 'none';
+        function toggleTab(t) {
+            document.getElementById('main-view').style.display = t === 'main' ? 'block' : 'none';
+            document.getElementById('prof-view').style.display = t === 'prof' ? 'block' : 'none';
         }
 
-        async function register() {
-            const u = document.getElementById('r-user').value.trim();
-            const p = document.getElementById('r-pass').value.trim();
-            const i = document.getElementById('r-inv').value.trim();
-            
-            const invSnap = await db.ref('invites/' + i).get();
-            const userSnap = await db.ref('users/' + u).get();
-
-            if(userSnap.exists()) return alert("ERROR: NAME_TAKEN");
-            if(invSnap.exists() && invSnap.val().active === true) {
-                const creator = invSnap.val().generated_by || "SYSTEM";
-                await db.ref('users/' + u).set({
-                    password: p,
-                    invited_by: creator,
-                    joined: new Date().toLocaleDateString(),
-                    my_invites: [],
-                    sub_end: "30_DAYS"
-                });
-                await db.ref('invites/' + i).update({ active: false, used_by: u });
-                alert("SUCCESS: ACCOUNT_READY");
-                toggleAuth();
-            } else {
-                alert("ERROR: INVALID_INVITE");
-            }
+        async function reg() {
+            const u = document.getElementById('r-u').value.trim(), p = document.getElementById('r-p').value.trim(), i = document.getElementById('r-i').value.trim();
+            const iS = await db.ref('invites/'+i).get();
+            if(iS.exists() && iS.val().active) {
+                await db.ref('users/'+u).set({ password:p, by: iS.val().gen_by || "System", date: new Date().toLocaleDateString(), invs:[], sub:"30 Days" });
+                await db.ref('invites/'+i).update({ active:false, used_by:u });
+                alert("Identity Created"); swap();
+            } else alert("Invalid Invite Key");
         }
 
         async function login() {
-            const u = document.getElementById('l-user').value.trim();
-            const p = document.getElementById('l-pass').value.trim();
-            const snap = await db.ref('users/' + u).get();
+            const u = document.getElementById('l-u').value.trim(), p = document.getElementById('l-p').value.trim();
+            const s = await db.ref('users/'+u).get();
+            if(s.exists() && s.val().password === p) {
+                uid = u; user = s.val(); render();
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('content').style.display = 'flex';
+                setTimeout(()=>document.getElementById('content').style.opacity='1',10);
+            } else alert("Access Denied");
+        }
 
-            if(snap.exists() && snap.val().password === p) {
-                currentUID = u;
-                currentUser = snap.val();
-                loadProfile();
-                document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
-                document.getElementById('main-content').style.display = 'flex';
-                setTimeout(() => document.getElementById('main-content').style.opacity = '1', 100);
+        function render() {
+            document.getElementById('disp-u').innerText = uid.toUpperCase();
+            document.getElementById('p-by').innerText = user.by || "System";
+            document.getElementById('p-date').innerText = user.date || "--.--.--";
+            
+            const m = new Date().getMonth()+"-"+new Date().getFullYear();
+            const c = user.history ? (user.history[m] || 0) : 0;
+            
+            if(uid.toLowerCase() === 'ryodeu') {
+                document.getElementById('edit-n').style.display = 'inline';
+                document.getElementById('p-lim').innerText = "∞ / ∞";
             } else {
-                alert("ERROR: WRONG_CREDENTIALS");
+                document.getElementById('p-lim').innerText = c + " / 2";
             }
+            document.getElementById('p-invs').innerText = (user.invs || []).join(' | ') || "NO KEYS GENERATED";
         }
 
-        function loadProfile() {
-            document.getElementById('p-username').innerText = currentUID.toUpperCase();
-            document.getElementById('p-invited-by').innerText = currentUser.invited_by || "SYSTEM";
-            document.getElementById('p-joined').innerText = currentUser.joined || "UNKNOWN";
-            document.getElementById('p-sub').innerText = currentUser.sub_end || "30_DAYS";
-            
-            // Если ты - создатель
-            if(currentUID.toLowerCase() === 'ryodeu') {
-                document.getElementById('rename-btn').style.display = 'inline-block';
-                document.getElementById('p-limit').innerText = "∞ / ∞";
-            } else {
-                const mKey = new Date().getMonth() + "-" + new Date().getFullYear();
-                const count = currentUser.gen_history ? (currentUser.gen_history[mKey] || 0) : 0;
-                document.getElementById('p-limit').innerText = `${count} / 2`;
-            }
+        async function genInv() {
+            const m = new Date().getMonth()+"-"+new Date().getFullYear();
+            let c = user.history ? (user.history[m] || 0) : 0;
+            if(uid.toLowerCase() !== 'ryodeu' && c >= 2) return alert("Monthly Limit Reached");
 
-            const invs = currentUser.my_invites || [];
-            document.getElementById('user-invites').innerHTML = invs.length ? invs.join('<br>') : "NO_GENERATED_KEYS";
+            const code = "DS-L-" + Math.random().toString(36).substring(2,12).toUpperCase() + "-" + Math.random().toString(36).substring(2,6).toUpperCase();
+            await db.ref('invites/'+code).set({ active:true, gen_by:uid });
+            const nI = user.invs ? [...user.invs, code] : [code];
+            const nH = user.history || {}; nH[m] = c + 1;
+            await db.ref('users/'+uid).update({ invs:nI, history:nH });
+            user.invs = nI; user.history = nH; render();
         }
 
-        async function generateUserInvite() {
-            const mKey = new Date().getMonth() + "-" + new Date().getFullYear();
-            let count = currentUser.gen_history ? (currentUser.gen_history[mKey] || 0) : 0;
-
-            if(currentUID.toLowerCase() !== 'ryodeu' && count >= 2) return alert("LIMIT_EXCEEDED");
-
-            const newCode = "BKR-" + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Math.random().toString(36).substring(2, 6).toUpperCase();
-            
-            await db.ref('invites/' + newCode).set({
-                active: true,
-                generated_by: currentUID
-            });
-
-            const updatedInvs = currentUser.my_invites ? [...currentUser.my_invites, newCode] : [newCode];
-            const updatedHistory = currentUser.gen_history || {};
-            updatedHistory[mKey] = count + 1;
-
-            await db.ref('users/' + currentUID).update({
-                my_invites: updatedInvites,
-                gen_history: updatedHistory
-            });
-
-            currentUser.my_invites = updatedInvs;
-            currentUser.gen_history = updatedHistory;
-            loadProfile();
-        }
-
-        async function changeNickname() {
-            const newNick = prompt("ENTER_NEW_NICKNAME:").trim();
-            if(!newNick || newNick === currentUID) return;
-            
-            const check = await db.ref('users/' + newNick).get();
-            if(check.exists()) return alert("NAME_TAKEN");
-
-            await db.ref('users/' + newNick).set(currentUser);
-            await db.ref('users/' + currentUID).remove();
-            
-            alert("IDENTITY_UPDATED. PLEASE_RE-LOGIN.");
+        async function rename() {
+            const n = prompt("New Nickname:"); if(!n || n === uid) return;
+            const check = await db.ref('users/'+n).get();
+            if(check.exists()) return alert("Name Taken");
+            await db.ref('users/'+n).set(user);
+            await db.ref('users/'+uid).remove();
+            alert("Identity Migrated. Re-login required.");
             location.reload();
         }
     </script>
