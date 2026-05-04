@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Premium Software</title>
+    <title>Desolation | Private Software</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -19,14 +19,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; min-height: 100vh; }
 
         /* Навигация */
         nav {
@@ -35,78 +28,43 @@
             background: rgba(8,8,8,0.8); backdrop-filter: blur(10px);
             z-index: 1000; border-bottom: 1px solid var(--border);
         }
-
         .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 3px; font-size: 1.2rem; }
         .nav-logo span { color: var(--accent); }
+        .tg-btn { text-decoration: none; border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px; color: var(--accent); font-size: 0.8rem; font-weight: 700; transition: 0.3s; }
+        .tg-btn:hover { background: var(--accent); color: #fff; }
 
-        .nav-links a {
-            text-decoration: none; color: #888; font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 2px; margin-left: 30px;
-            transition: 0.3s; font-weight: 700;
-        }
-        .nav-links a:hover { color: var(--accent); }
-        .tg-btn { border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px; color: var(--accent) !important; }
-        .tg-btn:hover { background: var(--accent); color: #fff !important; }
-
-        /* Экран авторизации */
+        /* Авторизация */
         #auth-screen {
             position: fixed; inset: 0; background: var(--bg);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .auth-container { width: 100%; max-width: 400px; padding: 40px; text-align: center; }
-        .auth-container h1 { font-family: 'Orbitron', sans-serif; margin-bottom: 40px; letter-spacing: 10px; font-size: 1.5rem; }
+        .auth-container h1 { font-family: 'Orbitron', sans-serif; margin-bottom: 30px; letter-spacing: 5px; font-size: 1.5rem; }
         
-        .input-group { position: relative; margin-bottom: 25px; }
         .input-group input {
             width: 100%; background: var(--card-bg); border: 1px solid var(--border);
-            padding: 15px; color: #fff; text-align: center; font-size: 1rem;
-            letter-spacing: 2px; transition: 0.3s;
+            padding: 15px; color: #fff; text-align: center; font-size: 0.9rem;
+            letter-spacing: 1px; margin-bottom: 15px; transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255,77,77,0.1); }
+        .input-group input:focus { border-color: var(--accent); }
 
-        .login-btn {
+        .action-btn {
             width: 100%; padding: 15px; background: var(--accent); border: none;
             color: #fff; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 3px; cursor: pointer; transition: 0.3s;
+            letter-spacing: 2px; cursor: pointer; transition: 0.3s; margin-bottom: 20px;
         }
-        .login-btn:hover { letter-spacing: 5px; background: #ff3333; }
+        .action-btn:hover { background: #ff3333; }
 
-        /* Главный контент */
-        main { 
-            display: none; opacity: 0; flex-direction: column; align-items: center; 
-            padding: 120px 20px; transition: 1s; 
-        }
+        .switch-mode { color: #555; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
+        .switch-mode:hover { color: #888; }
 
-        .hero-section { text-align: center; margin-bottom: 80px; }
-        .hero-section h2 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; letter-spacing: 15px; margin-bottom: 10px; }
-        .hero-section p { color: #555; text-transform: uppercase; letter-spacing: 5px; font-size: 0.9rem; }
-
-        .product-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px; width: 100%; max-width: 1000px;
-        }
-
-        .product-card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 50px 30px; text-align: center; transition: 0.4s;
-            position: relative; overflow: hidden;
-        }
-        .product-card:hover { border-color: var(--accent); transform: translateY(-5px); }
-        .product-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin-bottom: 15px; }
-        .price { font-size: 2rem; font-weight: 900; margin-bottom: 30px; color: var(--accent); }
-        
-        .buy-link {
-            display: inline-block; width: 100%; padding: 15px;
-            border: 1px solid var(--border); text-decoration: none;
-            color: #fff; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 2px; transition: 0.3s;
-        }
+        /* Сайт */
+        main { display: none; opacity: 0; flex-direction: column; align-items: center; padding: 120px 20px; transition: 1s; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; width: 100%; max-width: 1000px; }
+        .product-card { background: var(--card-bg); border: 1px solid var(--border); padding: 50px 30px; text-align: center; }
+        .buy-link { display: inline-block; width: 100%; padding: 15px; border: 1px solid var(--border); text-decoration: none; color: #fff; font-weight: 700; text-transform: uppercase; margin-top: 20px; transition: 0.3s; }
         .buy-link:hover { background: #fff; color: #000; }
-
-        .status { position: absolute; top: 15px; right: 15px; font-size: 0.6rem; color: #00ff00; letter-spacing: 1px; }
-
     </style>
 </head>
 <body>
@@ -114,42 +72,45 @@
     <nav>
         <div class="nav-logo">DESO<span>LATION</span></div>
         <div class="nav-links">
-            <a href="#">Status</a>
-            <a href="https://t.me/твой_канал" class="tg-btn" target="_blank">Telegram</a>
+            <a href="https://t.me/your_tg_channel" class="tg-btn" target="_blank">Telegram</a>
         </div>
     </nav>
 
-    <!-- Экран входа по инвайту -->
     <section id="auth-screen">
-        <div class="auth-container">
+        <div class="auth-container" id="login-form">
             <h1>LOGIN</h1>
             <div class="input-group">
-                <input type="text" id="invite-input" placeholder="LICENSE KEY">
+                <input type="text" id="l-user" placeholder="USERNAME">
+                <input type="password" id="l-pass" placeholder="PASSWORD">
             </div>
-            <button class="login-btn" onclick="handleAuth()">Enter System</button>
+            <button class="action-btn" onclick="login()">Sign In</button>
+            <p class="switch-mode" onclick="toggleAuth()">Don't have an account? Register</p>
+        </div>
+
+        <div class="auth-container" id="reg-form" style="display: none;">
+            <h1>REGISTER</h1>
+            <div class="input-group">
+                <input type="text" id="r-user" placeholder="CHOOSE USERNAME">
+                <input type="password" id="r-pass" placeholder="CREATE PASSWORD">
+                <input type="text" id="r-invite" placeholder="INVITE CODE">
+            </div>
+            <button class="action-btn" onclick="register()">Create Account</button>
+            <p class="switch-mode" onclick="toggleAuth()">Already registered? Login</p>
         </div>
     </section>
 
-    <!-- Главная страница софта -->
     <main id="main-content">
-        <div class="hero-section">
-            <h2>DESOLATION</h2>
-            <p>Next-Gen Private Software</p>
-        </div>
-
+        <h2 style="font-family: 'Orbitron'; letter-spacing: 10px; margin-bottom: 50px;">DESOLATION</h2>
         <div class="product-grid">
             <div class="product-card">
-                <div class="status">● UNDETECTED</div>
                 <h3>LITE</h3>
-                <div class="price">7 DAYS</div>
-                <a href="https://funpay.com/lots/offer?id=67547531" class="buy-link" target="_blank">Purchase Access</a>
+                <div style="color: var(--accent); font-size: 1.5rem; margin: 20px 0;">7 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547531" class="buy-link" target="_blank">Purchase</a>
             </div>
-
             <div class="product-card">
-                <div class="status">● UNDETECTED</div>
                 <h3>PRO</h3>
-                <div class="price">30 DAYS</div>
-                <a href="https://funpay.com/lots/offer?id=67547515" class="buy-link" target="_blank">Purchase Access</a>
+                <div style="color: var(--accent); font-size: 1.5rem; margin: 20px 0;">30 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547515" class="buy-link" target="_blank">Purchase</a>
             </div>
         </div>
     </main>
@@ -169,41 +130,63 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        async function handleAuth() {
-            const btn = document.querySelector('.login-btn');
-            const key = document.getElementById('invite-input').value.trim().toUpperCase();
-            
-            if (!key) return;
+        function toggleAuth() {
+            const l = document.getElementById('login-form');
+            const r = document.getElementById('reg-form');
+            l.style.display = l.style.display === 'none' ? 'block' : 'none';
+            r.style.display = r.style.display === 'none' ? 'block' : 'none';
+        }
 
-            btn.innerHTML = "VERIFYING...";
-            const ref = db.ref('invites/' + key);
+        function unlockSite() {
+            document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
+            const main = document.getElementById('main-content');
+            main.style.display = 'flex';
+            setTimeout(() => { main.style.opacity = '1'; }, 100);
+            document.body.style.overflow = 'auto';
+        }
+
+        async function register() {
+            const user = document.getElementById('r-user').value.trim();
+            const pass = document.getElementById('r-pass').value.trim();
+            const invite = document.getElementById('r-invite').value.trim().toUpperCase();
+
+            if(!user || !pass || !invite) return alert("Fill all fields");
+
+            const invRef = db.ref('invites/' + invite);
+            const userRef = db.ref('users/' + user);
 
             try {
-                const snap = await ref.get();
-                
-                if (snap.exists() && snap.val() === true) {
-                    await ref.set(false); // Деактивация ключа
-                    
-                    // Лог входа
-                    await db.ref('users').push().set({
-                        key: key,
-                        timestamp: new Date().toLocaleString()
-                    });
+                const invSnap = await invRef.get();
+                const userSnap = await userRef.get();
 
-                    // Успешный вход
-                    document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
-                    const main = document.getElementById('main-content');
-                    main.style.display = 'flex';
-                    setTimeout(() => { main.style.opacity = '1'; }, 100);
-                    document.body.style.overflow = 'auto';
+                if (userSnap.exists()) return alert("Username already taken");
+                if (invSnap.exists() && invSnap.val() === true) {
+                    // Создаем юзера
+                    await userRef.set({ password: pass, registered: new Date().toLocaleString() });
+                    // Сжигаем инвайт
+                    await invRef.set(false);
+                    alert("Account created! Now login.");
+                    toggleAuth();
                 } else {
-                    alert('INVALID LICENSE KEY');
-                    btn.innerHTML = "ENTER SYSTEM";
+                    alert("Invalid or used invite code");
                 }
-            } catch (e) {
-                alert('CONNECTION ERROR');
-                btn.innerHTML = "ENTER SYSTEM";
-            }
+            } catch(e) { alert("Error connecting to DB"); }
+        }
+
+        async function login() {
+            const user = document.getElementById('l-user').value.trim();
+            const pass = document.getElementById('l-pass').value.trim();
+
+            if(!user || !pass) return alert("Fill all fields");
+
+            try {
+                const snap = await db.ref('users/' + user).get();
+                if (snap.exists() && snap.val().password === pass) {
+                    unlockSite();
+                } else {
+                    alert("Invalid username or password");
+                }
+            } catch(e) { alert("Error connecting to DB"); }
         }
     </script>
 </body>
