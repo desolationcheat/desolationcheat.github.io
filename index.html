@@ -3,21 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESOLATION | Software</title>
-    <!-- Подключаем твой файл со стилями -->
+    <title>Desolation | Premium Software</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="stars"></div>
-    <div class="container">
-        <div class="logo">DESOLATION</div>
-        <p class="subtitle">Next-gen performance software</p>
-        
-        <div class="links">
-            <a href="#" class="btn">Telegram</a>
-            <a href="#" class="btn">Discord</a>
+    <div class="vignette"></div>
+    <div class="grid-bg"></div>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo-mini">DESOLATION</div>
+            <button class="login-btn" onclick="openLogin()">CLIENT LOGIN</button>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <header class="hero">
+            <h1 class="glitch" data-text="DESOLATION">DESOLATION</h1>
+            <p class="tagline">DOMINATE THE GAME WITH PRECISION</p>
+        </header>
+
+        <section class="shop-section">
+            <!-- Неделя -->
+            <div class="offer-card">
+                <div class="card-border"></div>
+                <div class="card-content">
+                    <h3>7 DAYS ACCESS</h3>
+                    <div class="price">WEEKLY</div>
+                    <ul class="feat-list">
+                        <li>Full Internal Engine</li>
+                        <li>Undetected Status</li>
+                        <li>Instant Key Delivery</li>
+                    </ul>
+                    <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-link">GET STARTED</a>
+                </div>
+            </div>
+
+            <!-- Месяц -->
+            <div class="offer-card premium">
+                <div class="card-border"></div>
+                <div class="card-content">
+                    <div class="best-choice">BEST CHOICE</div>
+                    <h3>30 DAYS ACCESS</h3>
+                    <div class="price">MONTHLY</div>
+                    <ul class="feat-list">
+                        <li>Priority Updates</li>
+                        <li>Advanced Protection</li>
+                        <li>Exclusive Community</li>
+                    </ul>
+                    <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-link">GET STARTED</a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <a href="https://t.me/desolationcheat" target="_blank" class="tg-button">
+                OFFICIAL TELEGRAM
+            </a>
+        </footer>
+    </div>
+
+    <!-- Окно авторизации -->
+    <div id="authModal" class="modal-overlay">
+        <div class="auth-box">
+            <div class="close-modal" onclick="closeLogin()">&times;</div>
+            <h2 class="auth-title">AUTHORIZATION</h2>
+            <div class="input-group">
+                <input type="text" placeholder="LICENSE KEY" class="auth-input">
+                <div class="input-glow"></div>
+            </div>
+            <button class="submit-auth">CONNECT</button>
         </div>
     </div>
+
+    <script>
+        function openLogin() { document.getElementById('authModal').classList.add('active'); }
+        function closeLogin() { document.getElementById('authModal').classList.remove('active'); }
+    </script>
 </body>
 </html>
