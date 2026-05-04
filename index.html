@@ -4,198 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desolation | Private Access</title>
+    
+    <!-- Firebase SDK (обязательно для работы базы) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
-        :root {
-            --accent: #ff0000;
-            --bg: #050505;
-            --card-bg: #0a0a0a;
-            --border: #141414;
-            --text-dim: #444;
-        }
-
+        :root { --accent: #ff0000; --bg: #050505; --border: #141414; }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        body {
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'Inter', -apple-system, sans-serif;
-            overflow: hidden; /* Блокируем скролл до ввода инвайта */
-        }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
 
-        /* Экран блокировки (Invite Wall) */
+        /* Экран ввода инвайта */
         #invite-wall {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.5s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999; display: flex;
+            justify-content: center; align-items: center; transition: 0.5s;
         }
-
-        .auth-box {
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-        }
-
-        .auth-box h2 {
-            font-size: 1rem;
-            letter-spacing: 8px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            color: #fff;
-        }
-
+        .auth-box { width: 100%; max-width: 350px; text-align: center; }
+        .auth-box h2 { font-size: 1rem; letter-spacing: 8px; margin-bottom: 40px; text-transform: uppercase; color: #fff; }
         .auth-box input {
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--border);
-            padding: 18px;
-            color: var(--accent);
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            transition: 0.3s;
+            width: 100%; background: #000; border: 1px solid var(--border);
+            padding: 18px; color: var(--accent); text-align: center;
+            font-family: monospace; font-size: 0.9rem; margin-bottom: 20px;
         }
-
-        .auth-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
-
         .btn-enter {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            width: 100%;
-            padding: 15px;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer;
-            letter-spacing: 2px;
-            font-size: 0.75rem;
+            background: var(--accent); color: #fff; border: none; width: 100%;
+            padding: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
+        .btn-enter:hover { background: #cc0000; }
 
-        /* Основной контент */
-        #main-site {
-            opacity: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: 1s ease;
-        }
-
-        nav {
-            width: 100%;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-            max-width: 1200px;
-        }
-
-        .logo { font-weight: 900; letter-spacing: 6px; text-transform: uppercase; font-size: 1.3rem; }
+        /* Основной сайт (скрыт до ввода ключа) */
+        #main-site { opacity: 0; display: none; flex-direction: column; align-items: center; padding-top: 15vh; transition: 1s; }
+        .logo { font-weight: 900; letter-spacing: 6px; text-transform: uppercase; font-size: 2.5rem; margin-bottom: 50px; }
         .logo span { color: var(--accent); }
-
-        .hero { margin-top: 15vh; text-align: center; margin-bottom: 60px; }
-        .hero h1 { font-size: 5.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; }
-        .hero p { color: var(--text-dim); letter-spacing: 5px; font-size: 0.75rem; text-transform: uppercase; }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            width: 100%;
-            max-width: 1000px;
-            background: var(--border);
-            gap: 1px;
-            border: 1px solid var(--border);
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); width: 100%; max-width: 800px; gap: 2px; background: var(--border); border: 1px solid var(--border); }
+        .card { background: #0a0a0a; padding: 60px 20px; text-align: center; }
+        .card h2 { font-size: 1.5rem; margin-bottom: 10px; }
+        
+        .buy-btn { 
+            display: block; text-decoration: none; color: #fff; border: 1px solid var(--border); 
+            padding: 15px; margin-top: 20px; font-weight: 700; font-size: 0.8rem; transition: 0.3s; 
         }
-
-        .card {
-            background: var(--card-bg);
-            padding: 80px 40px;
-            text-align: center;
-            transition: 0.4s;
-        }
-
-        .card h3 { color: var(--text-dim); font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 25px; }
-        .card .val { font-size: 4rem; font-weight: 900; margin-bottom: 40px; }
-
-        .buy-btn {
-            display: block;
-            text-decoration: none;
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 18px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transition: 0.3s;
-        }
-
         .buy-btn:hover { background: #fff; color: #000; }
-
-        .tg-link {
-            margin: 80px 0;
-            text-decoration: none;
-            color: var(--accent);
-            font-weight: 800;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
     </style>
 </head>
 <body>
 
-    <!-- СТЕНА ИНВАЙТА -->
+    <!-- Экран блокировки -->
     <div id="invite-wall">
         <div class="auth-box">
             <h2>Authentication</h2>
-            <input type="text" id="invite-key" placeholder="ENTER INVITE KEY">
-            <button class="btn-enter" onclick="unlock()">Access System</button>
+            <input type="text" id="invite-key" placeholder="ENTER DESOLATION INVITE">
+            <button class="btn-enter" onclick="unlock()">Verify Access</button>
         </div>
     </div>
 
-    <!-- КОНТЕНТ САЙТА -->
+    <!-- Основной контент -->
     <div id="main-site">
-        <nav>
-            <div class="logo">DESO<span>LATION</span></div>
-        </nav>
-
-        <div class="hero">
-            <h1>Desolation</h1>
-            <p>REDEFINING THE STANDARDS</p>
-        </div>
-
+        <div class="logo">DESO<span>LATION</span></div>
         <div class="grid">
             <div class="card">
-                <h3>SUBSCRIPTION</h3>
-                <div class="val">7 DAYS</div>
-                <a href="https://funpay.com/lots/offer?id=67547531" class="buy-btn" target="_blank">PURCHASE</a>
+                <h2>7 DAYS</h2>
+                <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-btn">PURCHASE</a>
             </div>
             <div class="card">
-                <h3>SUBSCRIPTION</h3>
-                <div class="val">30 DAYS</div>
-                <a href="https://funpay.com/lots/offer?id=67547515" class="buy-btn" target="_blank">PURCHASE</a>
+                <h2>30 DAYS</h2>
+                <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-btn">PURCHASE</a>
             </div>
         </div>
-
-        <a href="https://t.me/desolationcheat" class="tg-link" target="_blank">Telegram</a>
     </div>
 
     <script>
-        const keys = ['DSLT-K92B-X10P', 'DSLT-M48R-ZQLW', 'DSLT-77VX-991A', 'DSLT-B002-HHX4', 'DSLT-PL81-KJS6'];
+        // Твой конфиг из Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0",
+            authDomain: "desolationcheat.firebaseapp.com",
+            databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com",
+            projectId: "desolationcheat",
+            storageBucket: "desolationcheat.firebasestorage.app",
+            messagingSenderId: "437522470275",
+            appId: "1:437522470275:web:5b20d57e9907100ec712b6",
+            measurementId: "G-Y6RX4X88K1"
+        };
 
-        function unlock() {
-            const input = document.getElementById('invite-key').value.trim().toUpperCase();
-            if (keys.includes(input)) {
-                document.getElementById('invite-wall').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('invite-wall').style.display = 'none';
-                    document.getElementById('main-site').style.opacity = '1';
-                    document.body.style.overflow = 'auto';
-                }, 500);
-            } else {
-                alert('ACCESS DENIED: INVALID KEY');
+        // Инициализация базы
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        async function unlock() {
+            const keyInput = document.getElementById('invite-key');
+            const key = keyInput.value.trim().toUpperCase();
+            
+            if (!key) return;
+
+            // Проверка ключа в базе
+            const ref = db.ref('invites/' + key);
+
+            try {
+                const snap = await ref.get();
+                
+                if (snap.exists() && snap.val() === true) {
+                    // 1. Деактивируем инвайт
+                    await ref.set(false);
+
+                    // 2. Логируем вход
+                    await db.ref('users').push().set({
+                        invite: key,
+                        software: "Desolation",
+                        date: new Date().toLocaleString()
+                    });
+
+                    // 3. Открываем сайт
+                    document.getElementById('invite-wall').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('invite-wall').style.display = 'none';
+                        const mainSite = document.getElementById('main-site');
+                        mainSite.style.display = 'flex';
+                        setTimeout(() => { mainSite.style.opacity = '1'; }, 50);
+                        document.body.style.overflow = 'auto';
+                    }, 500);
+
+                } else {
+                    alert('INVALID OR EXPIRED INVITE');
+                    keyInput.value = '';
+                }
+            } catch (e) {
+                console.error(e);
+                alert('DB ERROR: Check your Firebase Rules tab!');
             }
         }
     </script>
