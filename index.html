@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Performance Software</title>
+    <title>Desolation | Official</title>
     <style>
         :root {
-            --accent: #ff0000;
-            --bg: #080808;
-            --panel: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #888888;
+            --accent: #ff4747;
+            --bg: #050505;
+            --panel: rgba(20, 20, 20, 0.7);
+            --border: rgba(255, 71, 71, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Навигация */
@@ -29,10 +29,10 @@
             position: fixed;
             top: 0; width: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border);
             z-index: 1000;
-            padding: 20px 0;
+            padding: 15px 0;
         }
 
         .nav-container {
@@ -41,146 +41,145 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 25px;
         }
 
         .logo {
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            font-size: 1.2rem;
             text-transform: uppercase;
         }
 
         .logo span { color: var(--accent); }
 
-        .login-btn {
+        .client-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            padding: 10px 24px;
+            padding: 8px 20px;
             font-size: 0.75rem;
             font-weight: 700;
             cursor: pointer;
-            border-radius: 2px;
-            transition: all 0.3s ease;
+            border-radius: 3px;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        .login-btn:hover {
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        .client-btn:hover {
+            box-shadow: 0 0 20px rgba(255, 71, 71, 0.4);
             transform: translateY(-1px);
         }
 
-        /* Hero секция */
+        /* Главный блок */
         .hero {
-            height: 60vh;
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: radial-gradient(circle at 50% 50%, #150000 0%, var(--bg) 100%);
-            padding: 0 20px;
+            padding-top: 80px;
+            background: radial-gradient(circle at center, #1a0808 0%, var(--bg) 70%);
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 10vw, 5.5rem);
+            font-size: clamp(3rem, 10vw, 6rem);
             font-weight: 900;
+            margin-bottom: 5px;
             letter-spacing: -2px;
-            margin-bottom: 10px;
-            animation: fadeIn 1s ease-out;
         }
 
         .hero p {
-            color: var(--text-dim);
-            letter-spacing: 6px;
-            font-size: 0.85rem;
+            color: #666;
+            letter-spacing: 5px;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            animation: fadeIn 1.5s ease-out;
+            margin-bottom: 50px;
         }
 
-        /* Карточки */
-        .content {
-            max-width: 1000px;
-            margin: -100px auto 100px;
+        /* Тарифы */
+        .pricing {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            padding: 0 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            padding: 0 20px 60px;
         }
 
         .card {
             background: var(--panel);
             border: 1px solid var(--border);
-            padding: 50px 40px;
-            border-radius: 4px;
-            backdrop-filter: blur(5px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 45px 30px;
+            border-radius: 5px;
+            transition: 0.4s;
+            text-align: center;
         }
 
         .card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 0, 0, 0.5);
-            transform: translateY(-8px);
+            border-color: var(--accent);
+            background: rgba(30, 30, 30, 0.8);
+            transform: translateY(-5px);
         }
 
         .card h3 {
             font-size: 0.7rem;
-            color: var(--text-dim);
-            letter-spacing: 3px;
-            margin-bottom: 20px;
+            color: #888;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
         }
 
-        .card .price {
+        .card .time {
             font-size: 3rem;
-            font-weight: 900;
+            font-weight: 800;
             margin-bottom: 30px;
         }
 
-        .card .buy-btn {
+        .buy-link {
             display: block;
             text-decoration: none;
             color: #fff;
-            border: 1px solid var(--border);
-            padding: 16px;
-            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px;
             font-size: 0.8rem;
             font-weight: 700;
             transition: 0.3s;
+            border-radius: 3px;
         }
 
-        .card .buy-btn:hover {
+        .buy-link:hover {
             background: #fff;
             color: #000;
         }
 
-        /* Секция Telegram */
-        .tg-container {
+        /* Телеграм */
+        .tg-box {
+            padding-bottom: 80px;
             text-align: center;
-            padding-bottom: 100px;
         }
 
-        .tg-button {
+        .tg-btn {
             display: inline-block;
             text-decoration: none;
-            background: transparent;
             color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 15px 40px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 2px;
-            transition: all 0.3s ease;
             text-transform: uppercase;
+            padding: 15px 35px;
+            border: 1px solid var(--accent);
+            transition: 0.3s;
         }
 
-        .tg-button:hover {
+        .tg-btn:hover {
             background: var(--accent);
             color: #fff;
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 30px rgba(255, 71, 71, 0.3);
         }
 
-        /* Модалка */
-        #auth {
+        /* Окно логина */
+        #authModal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -191,11 +190,11 @@
         }
 
         .modal {
-            background: #111;
-            padding: 60px 40px;
-            width: 100%;
-            max-width: 420px;
+            background: #0a0a0a;
             border: 1px solid var(--border);
+            padding: 50px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
         }
 
@@ -204,14 +203,18 @@
             padding: 15px;
             margin: 25px 0;
             background: #000;
-            border: 1px solid var(--border);
-            color: #fff;
-            font-family: inherit;
+            border: 1px solid #222;
+            color: var(--accent);
+            text-align: center;
+            outline: none;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .close-modal {
+            margin-top: 20px;
+            color: #444;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -220,45 +223,45 @@
     <nav>
         <div class="nav-container">
             <div class="logo">DESO<span>LATION</span></div>
-            <button class="login-btn" onclick="modal(true)">CLIENT LOGIN</button>
+            <button class="client-btn" onclick="toggle(true)">Client Login</button>
         </div>
     </nav>
 
     <section class="hero">
         <h1>Desolation</h1>
         <p>REDEFINING THE STANDARDS</p>
+
+        <div class="pricing">
+            <div class="card">
+                <h3>WEEKLY ACCESS</h3>
+                <div class="time">7 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-link">PURCHASE</a>
+            </div>
+            <div class="card">
+                <h3>MONTHLY ACCESS</h3>
+                <div class="time">30 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-link">PURCHASE</a>
+            </div>
+        </div>
     </section>
 
-    <main class="content">
-        <div class="card">
-            <h3>WEEKLY ACCESS</h3>
-            <div class="price">7 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-btn">PURCHASE</a>
-        </div>
-        <div class="card">
-            <h3>MONTHLY ACCESS</h3>
-            <div class="price">30 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-btn">PURCHASE</a>
-        </div>
-    </main>
-
-    <div class="tg-container">
-        <a href="https://t.me/desolationcheat" target="_blank" class="tg-button">
-            Join Telegram
-        </a>
+    <div class="tg-box">
+        <a href="https://t.me/desolationcheat" target="_blank" class="tg-btn">Telegram Channel</a>
     </div>
 
-    <div id="auth">
+    <div id="authModal">
         <div class="modal">
-            <h2 style="letter-spacing: 4px; font-size: 1rem;">AUTHORIZATION</h2>
-            <input type="text" placeholder="License Key">
-            <button class="login-btn" style="width: 100%;" onclick="alert('Checking key...')">CONNECT</button>
-            <p style="margin-top: 25px; color: #444; font-size: 0.7rem; cursor: pointer;" onclick="modal(false)">[ BACK TO SITE ]</p>
+            <h2 style="letter-spacing: 3px; font-size: 1rem;">AUTHORIZATION</h2>
+            <input type="text" placeholder="ENTER LICENSE KEY">
+            <button class="client-btn" style="width: 100%;" onclick="alert('Checking...')">Connect</button>
+            <div class="close-modal" onclick="toggle(false)">BACK TO SITE</div>
         </div>
     </div>
 
     <script>
-        function modal(v) { document.getElementById('auth').style.display = v ? 'flex' : 'none'; }
+        function toggle(show) {
+            document.getElementById('authModal').style.display = show ? 'flex' : 'none';
+        }
     </script>
 
 </body>
