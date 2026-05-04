@@ -3,163 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Performance</title>
+    <title>Desolation | Performance Software</title>
     <style>
         :root {
             --accent: #ff0000;
-            --bg: #0b0b0b;
-            --panel: rgba(20, 20, 20, 0.8);
-            --border: rgba(255, 255, 255, 0.05);
+            --bg: #080808;
+            --panel: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #888888;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg);
-            color: #eee;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Навигация в стиле Interium */
+        /* Навигация */
         nav {
             position: fixed;
             top: 0; width: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
-            z-index: 100;
-            padding: 15px 0;
+            z-index: 1000;
+            padding: 20px 0;
         }
 
         .nav-container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 30px;
         }
 
         .logo {
-            font-weight: 800;
-            letter-spacing: 2px;
-            font-size: 1.2rem;
-            color: #fff;
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
         }
 
         .logo span { color: var(--accent); }
 
-        .login-trigger {
+        .login-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            padding: 8px 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            padding: 10px 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
             cursor: pointer;
-            border-radius: 4px;
-            transition: 0.3s;
+            border-radius: 2px;
+            transition: all 0.3s ease;
         }
 
-        .login-trigger:hover { filter: brightness(1.2); }
+        .login-btn:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            transform: translateY(-1px);
+        }
 
-        /* Главный блок */
+        /* Hero секция */
         .hero {
-            padding: 180px 20px 100px;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            background: radial-gradient(circle at center, #1a0505 0%, var(--bg) 70%);
+            background: radial-gradient(circle at 50% 50%, #150000 0%, var(--bg) 100%);
+            padding: 0 20px;
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(3rem, 10vw, 5.5rem);
             font-weight: 900;
+            letter-spacing: -2px;
             margin-bottom: 10px;
-            text-transform: uppercase;
+            animation: fadeIn 1s ease-out;
         }
 
         .hero p {
-            color: #888;
-            letter-spacing: 4px;
-            font-size: 0.9rem;
+            color: var(--text-dim);
+            letter-spacing: 6px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            animation: fadeIn 1.5s ease-out;
         }
 
-        /* Карточки товаров */
-        .pricing {
+        /* Карточки */
+        .content {
             max-width: 1000px;
-            margin: 0 auto;
+            margin: -100px auto 100px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 40px 20px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
         }
 
         .card {
             background: var(--panel);
             border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 8px;
-            text-align: center;
-            transition: 0.3s;
+            padding: 50px 40px;
+            border-radius: 4px;
+            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card:hover {
-            border-color: rgba(255, 0, 0, 0.3);
-            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 0, 0, 0.5);
+            transform: translateY(-8px);
         }
 
-        .card h3 { font-size: 0.8rem; color: #666; letter-spacing: 2px; }
-        .price { font-size: 2.5rem; font-weight: 800; margin: 15px 0; color: #fff; }
+        .card h3 {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
 
-        .buy-btn {
+        .card .price {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+
+        .card .buy-btn {
             display: block;
             text-decoration: none;
             color: #fff;
             border: 1px solid var(--border);
-            padding: 12px;
-            margin-top: 25px;
+            padding: 16px;
+            text-align: center;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             transition: 0.3s;
-            border-radius: 4px;
         }
 
-        .buy-btn:hover {
+        .card .buy-btn:hover {
             background: #fff;
             color: #000;
         }
 
-        .tg-section { text-align: center; margin: 40px 0; }
-        .tg-link { color: var(--accent); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+        /* Футер */
+        footer {
+            text-align: center;
+            padding-bottom: 100px;
+        }
 
-        /* Модалка логина */
-        #authModal {
+        .tg-link {
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .tg-link:hover { opacity: 1; text-shadow: 0 0 10px var(--accent); }
+
+        /* Модалка */
+        #auth {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 200;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
         }
 
-        .modal-content {
+        .modal {
             background: #111;
-            padding: 40px;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 8px;
+            padding: 60px 40px;
+            width: 100%;
+            max-width: 420px;
             border: 1px solid var(--border);
+            text-align: center;
         }
 
-        .modal-content input {
+        .modal input {
             width: 100%;
-            padding: 12px;
-            margin: 20px 0;
+            padding: 15px;
+            margin: 25px 0;
             background: #000;
             border: 1px solid var(--border);
             color: #fff;
-            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -168,45 +212,43 @@
     <nav>
         <div class="nav-container">
             <div class="logo">DESO<span>LATION</span></div>
-            <button class="login-trigger" onclick="toggleModal(true)">LOGIN</button>
+            <button class="login-btn" onclick="modal(true)">CLIENT LOGIN</button>
         </div>
     </nav>
 
-    <div class="hero">
+    <section class="hero">
         <h1>Desolation</h1>
-        <p>REDEFINING GAMEPLAY LIMITS</p>
-    </div>
+        <p>REDEFINING THE STANDARDS</p>
+    </section>
 
-    <section class="pricing">
+    <main class="content">
         <div class="card">
-            <h3>RECURRING</h3>
+            <h3>WEEKLY ACCESS</h3>
             <div class="price">7 DAYS</div>
             <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-btn">PURCHASE</a>
         </div>
         <div class="card">
-            <h3>RECURRING</h3>
+            <h3>MONTHLY ACCESS</h3>
             <div class="price">30 DAYS</div>
             <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-btn">PURCHASE</a>
         </div>
-    </section>
+    </main>
 
-    <div class="tg-section">
-        <a href="https://t.me/desolationcheat" target="_blank" class="tg-link">JOIN TELEGRAM CHANNEL</a>
-    </div>
+    <footer>
+        <a href="https://t.me/desolationcheat" target="_blank" class="tg-link">TELEGRAM CHANNEL</a>
+    </footer>
 
-    <div id="authModal">
-        <div class="modal-content">
-            <h2 style="font-size: 1.2rem; text-align: center;">AUTHORIZATION</h2>
+    <div id="auth">
+        <div class="modal">
+            <h2 style="letter-spacing: 4px; font-size: 1rem;">AUTHORIZATION</h2>
             <input type="text" placeholder="License Key">
-            <button class="login-trigger" style="width: 100%;" onclick="alert('Checking...')">CONNECT</button>
-            <p style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: #444; cursor: pointer;" onclick="toggleModal(false)">CLOSE</p>
+            <button class="login-btn" style="width: 100%;" onclick="alert('Checking key...')">CONNECT</button>
+            <p style="margin-top: 25px; color: #444; font-size: 0.7rem; cursor: pointer;" onclick="modal(false)">[ BACK TO SITE ]</p>
         </div>
     </div>
 
     <script>
-        function toggleModal(show) {
-            document.getElementById('authModal').style.display = show ? 'flex' : 'none';
-        }
+        function modal(v) { document.getElementById('auth').style.display = v ? 'flex' : 'none'; }
     </script>
 
 </body>
