@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Bankroll Mafia</title>
+    <title>Desolation | Performance Software</title>
     <style>
         :root {
             --accent: #ff0000;
             --bg: #050505;
             --card-bg: #0a0a0a;
             --border: #141414;
-            --text-dim: #555;
+            --text-dim: #444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -26,7 +26,7 @@
 
         nav {
             width: 100%;
-            padding: 40px;
+            padding: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -35,15 +35,14 @@
             top: 0;
             z-index: 10;
         }
-
-        .logo { font-weight: 900; letter-spacing: 5px; text-transform: uppercase; font-size: 1.1rem; }
+        .logo { font-weight: 900; letter-spacing: 5px; text-transform: uppercase; font-size: 1.2rem; }
         .logo span { color: var(--accent); }
         
         .client-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 25px;
             font-size: 0.7rem;
             font-weight: 800;
             cursor: pointer;
@@ -51,98 +50,88 @@
             transition: 0.3s;
         }
 
-        .client-btn:hover { opacity: 0.8; box-shadow: 0 0 20px rgba(255,0,0,0.2); }
-
         .hero {
-            margin-top: 25vh;
+            margin-top: 20vh;
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 60px;
         }
-        .hero h1 { font-size: 5.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; }
-        .hero p { color: var(--text-dim); letter-spacing: 6px; font-size: 0.75rem; text-transform: uppercase; }
+        .hero h1 { font-size: 5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+        .hero p { color: var(--text-dim); letter-spacing: 4px; font-size: 0.8rem; text-transform: uppercase; }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            width: 100%;
-            max-width: 1000px;
-            border: 1px solid var(--border);
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2px;
             background: var(--border);
-            gap: 1px;
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid var(--border);
         }
         .card {
             background: var(--card-bg);
-            padding: 80px 40px;
+            padding: 60px 40px;
             text-align: center;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
         }
-        .card:hover { background: #0d0d0d; }
-        .card h3 { color: var(--text-dim); font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 25px; }
-        .card .val { font-size: 4rem; font-weight: 900; margin-bottom: 45px; }
+        .card:hover { background: #0c0c0c; }
+        .card h3 { color: var(--text-dim); font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 20px; }
+        .card .val { font-size: 3.5rem; font-weight: 900; margin-bottom: 40px; }
         
         .buy-btn {
             display: block;
             text-decoration: none;
             color: #fff;
             border: 1px solid var(--border);
-            padding: 18px;
-            font-size: 0.75rem;
+            padding: 15px;
+            font-size: 0.8rem;
             font-weight: 700;
             transition: 0.3s;
-            letter-spacing: 1px;
         }
         .buy-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-        .footer-links {
-            margin: 80px 0;
-            display: flex;
-            gap: 20px;
-        }
-
         .tg-link {
+            margin: 60px 0;
             text-decoration: none;
-            color: #fff;
+            color: var(--accent);
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border: 1px solid var(--border);
-            padding: 15px 45px;
+            border: 1px solid var(--accent);
+            padding: 15px 40px;
             transition: 0.3s;
         }
-        .tg-link:hover { border-color: var(--accent); color: var(--accent); }
+        .tg-link:hover { background: var(--accent); color: #fff; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
 
+        /* Auth Modal */
         #modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.99);
+            background: rgba(0,0,0,0.98);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
         .modal-content {
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            border: 1px solid var(--border);
-            background: var(--card-bg);
+            max-width: 380px;
             text-align: center;
+            padding: 20px;
         }
-        .modal-content h2 { font-size: 1.2rem; letter-spacing: 6px; margin-bottom: 35px; color: var(--accent); }
+        .modal-content h2 { font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 30px; }
         .modal-content input {
             width: 100%;
             background: #000;
             border: 1px solid var(--border);
-            padding: 18px;
+            padding: 15px;
             color: #fff;
             margin-bottom: 15px;
             font-family: inherit;
-            font-size: 0.8rem;
             text-align: center;
         }
         .modal-content input:focus { border-color: var(--accent); }
-        .close-btn { color: var(--text-dim); cursor: pointer; font-size: 0.6rem; margin-top: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        .close-btn { color: var(--text-dim); cursor: pointer; font-size: 0.7rem; margin-top: 20px; text-decoration: underline; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -154,38 +143,35 @@
 
     <div class="hero">
         <h1>Desolation</h1>
-        <p>Project by Bankroll Mafia</p>
+        <p>REDEFINING THE STANDARDS</p>
     </div>
 
     <div class="grid">
         <div class="card">
-            <h3>SUBSCRIPTION</h3>
+            <h3>RECURRING</h3>
             <div class="val">7 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547531" class="buy-btn" target="_blank">GET ACCESS</a>
+            <a href="https://funpay.com/lots/offer?id=67547531" class="buy-btn" target="_blank">PURCHASE</a>
         </div>
         <div class="card">
-            <h3>SUBSCRIPTION</h3>
+            <h3>RECURRING</h3>
             <div class="val">30 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547515" class="buy-btn" target="_blank">GET ACCESS</a>
+            <a href="https://funpay.com/lots/offer?id=67547515" class="buy-btn" target="_blank">PURCHASE</a>
         </div>
     </div>
 
-    <div class="footer-links">
-        <a href="https://t.me/desolationcheat" class="tg-link" target="_blank">Telegram</a>
-    </div>
+    <a href="https://t.me/desolationcheat" class="tg-link" target="_blank">Join Telegram</a>
 
     <div id="modal">
         <div class="modal-content">
-            <h2>INVITE SYSTEM</h2>
+            <h2>INVITE ONLY</h2>
             <input type="text" id="username" placeholder="USERNAME">
             <input type="text" id="invite" placeholder="INVITE KEY">
-            <button class="client-btn" style="width: 100%;" onclick="checkInvite()">Join the Mafia</button>
-            <div class="close-btn" onclick="closeModal()">Return to shadows</div>
+            <button class="client-btn" style="width: 100%;" onclick="checkInvite()">Register</button>
+            <div class="close-btn" onclick="closeModal()">Close</div>
         </div>
     </div>
 
     <script>
-        // Твои ключи
         const validInvites = [
             'DSLT-K92B-X10P', 
             'DSLT-M48R-ZQLW', 
@@ -198,13 +184,12 @@
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         
         function checkInvite() {
-            const inviteInput = document.getElementById('invite').value.trim().toUpperCase();
-            
-            if (validInvites.includes(inviteInput)) {
-                alert('Welcome to Bankroll Mafia. Registration successful.');
+            const invite = document.getElementById('invite').value.trim().toUpperCase();
+            if(validInvites.includes(invite)) {
+                alert('Success! Welcome to Desolation.');
                 closeModal();
             } else {
-                alert('Invalid or expired invite key.');
+                alert('Invalid Invite Key.');
             }
         }
     </script>
