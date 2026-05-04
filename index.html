@@ -3,80 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Private Access</title>
+    <title>Desolation | Premium Software</title>
     
-    <!-- Подключение Firebase SDK (версия Compat для стабильности) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <style>
-        :root { --accent: #ff0000; --bg: #050505; --border: #141414; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;700&display=swap');
+
+        :root { 
+            --accent: #ff4d4d; 
+            --bg: #080808; 
+            --card-bg: #0f0f0f;
+            --border: #1a1a1a; 
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', 'Segoe UI', sans-serif; overflow: hidden; }
-
-        /* Экран авторизации (Блокировщик) */
-        #invite-wall {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 9999; display: flex;
-            justify-content: center; align-items: center; transition: 0.5s ease-in-out;
-        }
-        .auth-box { width: 100%; max-width: 350px; text-align: center; }
-        .auth-box h2 { font-size: 0.9rem; letter-spacing: 8px; margin-bottom: 40px; text-transform: uppercase; color: #eee; }
-        .auth-box input {
-            width: 100%; background: #000; border: 1px solid var(--border);
-            padding: 18px; color: var(--accent); text-align: center;
-            font-family: 'Courier New', monospace; font-size: 0.9rem; margin-bottom: 20px;
-        }
-        .btn-enter {
-            background: var(--accent); color: #fff; border: none; width: 100%;
-            padding: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s;
-        }
-        .btn-enter:hover { background: #cc0000; transform: scale(1.02); }
-
-        /* Основной контент сайта (Desolation) */
-        #main-site { opacity: 0; display: none; flex-direction: column; align-items: center; padding-top: 15vh; transition: 1s; }
-        .logo { font-weight: 900; letter-spacing: 6px; text-transform: uppercase; font-size: 2.5rem; margin-bottom: 50px; }
-        .logo span { color: var(--accent); }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); width: 100%; max-width: 800px; gap: 2px; background: var(--border); border: 1px solid var(--border); }
-        .card { background: #0a0a0a; padding: 60px 20px; text-align: center; }
-        .card h2 { font-size: 1.5rem; margin-bottom: 10px; font-weight: 800; }
-        
-        .buy-btn { 
-            display: block; text-decoration: none; color: #fff; border: 1px solid var(--border); 
-            padding: 15px; margin-top: 20px; font-weight: 700; font-size: 0.75rem; transition: 0.3s; 
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        .buy-btn:hover { background: #fff; color: #000; }
+
+        /* Навигация */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(8,8,8,0.8); backdrop-filter: blur(10px);
+            z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 3px; font-size: 1.2rem; }
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links a {
+            text-decoration: none; color: #888; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 2px; margin-left: 30px;
+            transition: 0.3s; font-weight: 700;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .tg-btn { border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px; color: var(--accent) !important; }
+        .tg-btn:hover { background: var(--accent); color: #fff !important; }
+
+        /* Экран авторизации */
+        #auth-screen {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-container { width: 100%; max-width: 400px; padding: 40px; text-align: center; }
+        .auth-container h1 { font-family: 'Orbitron', sans-serif; margin-bottom: 40px; letter-spacing: 10px; font-size: 1.5rem; }
+        
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group input {
+            width: 100%; background: var(--card-bg); border: 1px solid var(--border);
+            padding: 15px; color: #fff; text-align: center; font-size: 1rem;
+            letter-spacing: 2px; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(255,77,77,0.1); }
+
+        .login-btn {
+            width: 100%; padding: 15px; background: var(--accent); border: none;
+            color: #fff; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 3px; cursor: pointer; transition: 0.3s;
+        }
+        .login-btn:hover { letter-spacing: 5px; background: #ff3333; }
+
+        /* Главный контент */
+        main { 
+            display: none; opacity: 0; flex-direction: column; align-items: center; 
+            padding: 120px 20px; transition: 1s; 
+        }
+
+        .hero-section { text-align: center; margin-bottom: 80px; }
+        .hero-section h2 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; letter-spacing: 15px; margin-bottom: 10px; }
+        .hero-section p { color: #555; text-transform: uppercase; letter-spacing: 5px; font-size: 0.9rem; }
+
+        .product-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; width: 100%; max-width: 1000px;
+        }
+
+        .product-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 50px 30px; text-align: center; transition: 0.4s;
+            position: relative; overflow: hidden;
+        }
+        .product-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .product-card h3 { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin-bottom: 15px; }
+        .price { font-size: 2rem; font-weight: 900; margin-bottom: 30px; color: var(--accent); }
+        
+        .buy-link {
+            display: inline-block; width: 100%; padding: 15px;
+            border: 1px solid var(--border); text-decoration: none;
+            color: #fff; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; transition: 0.3s;
+        }
+        .buy-link:hover { background: #fff; color: #000; }
+
+        .status { position: absolute; top: 15px; right: 15px; font-size: 0.6rem; color: #00ff00; letter-spacing: 1px; }
+
     </style>
 </head>
 <body>
 
-    <!-- Блок ввода инвайта -->
-    <div id="invite-wall">
-        <div class="auth-box">
-            <h2>Authentication</h2>
-            <input type="text" id="invite-key" placeholder="ENTER DESOLATION INVITE">
-            <button class="btn-enter" onclick="unlock()">Verify System</button>
+    <nav>
+        <div class="nav-logo">DESO<span>LATION</span></div>
+        <div class="nav-links">
+            <a href="#">Status</a>
+            <a href="https://t.me/твой_канал" class="tg-btn" target="_blank">Telegram</a>
         </div>
-    </div>
+    </nav>
 
-    <!-- Основная страница софта -->
-    <div id="main-site">
-        <div class="logo">DESO<span>LATION</span></div>
-        <div class="grid">
-            <div class="card">
-                <h2>7 DAYS</h2>
-                <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-btn">PURCHASE ACCESS</a>
+    <!-- Экран входа по инвайту -->
+    <section id="auth-screen">
+        <div class="auth-container">
+            <h1>LOGIN</h1>
+            <div class="input-group">
+                <input type="text" id="invite-input" placeholder="LICENSE KEY">
             </div>
-            <div class="card">
-                <h2>30 DAYS</h2>
-                <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-btn">PURCHASE ACCESS</a>
+            <button class="login-btn" onclick="handleAuth()">Enter System</button>
+        </div>
+    </section>
+
+    <!-- Главная страница софта -->
+    <main id="main-content">
+        <div class="hero-section">
+            <h2>DESOLATION</h2>
+            <p>Next-Gen Private Software</p>
+        </div>
+
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="status">● UNDETECTED</div>
+                <h3>LITE</h3>
+                <div class="price">7 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547531" class="buy-link" target="_blank">Purchase Access</a>
+            </div>
+
+            <div class="product-card">
+                <div class="status">● UNDETECTED</div>
+                <h3>PRO</h3>
+                <div class="price">30 DAYS</div>
+                <a href="https://funpay.com/lots/offer?id=67547515" class="buy-link" target="_blank">Purchase Access</a>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Конфигурация твоего проекта Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0",
             authDomain: "desolationcheat.firebaseapp.com",
@@ -88,50 +166,43 @@
             measurementId: "G-Y6RX4X88K1"
         };
 
-        // Инициализация
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        async function unlock() {
-            const keyInput = document.getElementById('invite-key');
-            const key = keyInput.value.trim().toUpperCase();
+        async function handleAuth() {
+            const btn = document.querySelector('.login-btn');
+            const key = document.getElementById('invite-input').value.trim().toUpperCase();
             
             if (!key) return;
 
-            // Путь к проверке инвайта в базе
+            btn.innerHTML = "VERIFYING...";
             const ref = db.ref('invites/' + key);
 
             try {
                 const snap = await ref.get();
                 
                 if (snap.exists() && snap.val() === true) {
-                    // 1. Отключаем инвайт после использования
-                    await ref.set(false);
-
-                    // 2. Логируем вход пользователя
+                    await ref.set(false); // Деактивация ключа
+                    
+                    // Лог входа
                     await db.ref('users').push().set({
-                        invite: key,
-                        software: "Desolation",
-                        date: new Date().toLocaleString()
+                        key: key,
+                        timestamp: new Date().toLocaleString()
                     });
 
-                    // 3. Плавный переход на сайт
-                    document.getElementById('invite-wall').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('invite-wall').style.display = 'none';
-                        const mainSite = document.getElementById('main-site');
-                        mainSite.style.display = 'flex';
-                        setTimeout(() => { mainSite.style.opacity = '1'; }, 50);
-                        document.body.style.overflow = 'auto';
-                    }, 500);
-
+                    // Успешный вход
+                    document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
+                    const main = document.getElementById('main-content');
+                    main.style.display = 'flex';
+                    setTimeout(() => { main.style.opacity = '1'; }, 100);
+                    document.body.style.overflow = 'auto';
                 } else {
-                    alert('ACCESS DENIED: INVALID OR USED INVITE');
-                    keyInput.value = '';
+                    alert('INVALID LICENSE KEY');
+                    btn.innerHTML = "ENTER SYSTEM";
                 }
             } catch (e) {
-                console.error(e);
-                alert('DATABASE ERROR: Check your Firebase Rules!');
+                alert('CONNECTION ERROR');
+                btn.innerHTML = "ENTER SYSTEM";
             }
         }
     </script>
