@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Private</title>
+    <title>Desolation | Bankroll Mafia</title>
     <style>
         :root {
             --accent: #ff0000;
             --bg: #050505;
             --card-bg: #0a0a0a;
-            --border: #1a1a1a;
-            --text-dim: #444;
+            --border: #141414;
+            --text-dim: #555;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         body {
             background-color: var(--bg);
             color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Nav */
         nav {
             width: 100%;
-            padding: 30px;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -36,154 +35,176 @@
             top: 0;
             z-index: 10;
         }
-        .logo { font-weight: 900; letter-spacing: 5px; text-transform: uppercase; font-size: 1.2rem; }
+
+        .logo { font-weight: 900; letter-spacing: 5px; text-transform: uppercase; font-size: 1.1rem; }
         .logo span { color: var(--accent); }
         
         .client-btn {
             background: var(--accent);
             color: #fff;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 30px;
             font-size: 0.7rem;
             font-weight: 800;
             cursor: pointer;
             text-transform: uppercase;
+            transition: 0.3s;
         }
 
-        /* Hero */
+        .client-btn:hover { opacity: 0.8; box-shadow: 0 0 20px rgba(255,0,0,0.2); }
+
         .hero {
-            margin-top: 20vh;
+            margin-top: 25vh;
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
         }
-        .hero h1 { font-size: 5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .hero p { color: var(--text-dim); letter-spacing: 4px; font-size: 0.8rem; }
+        .hero h1 { font-size: 5.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; }
+        .hero p { color: var(--text-dim); letter-spacing: 6px; font-size: 0.75rem; text-transform: uppercase; }
 
-        /* Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2px;
-            background: var(--border);
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             border: 1px solid var(--border);
+            background: var(--border);
+            gap: 1px;
         }
         .card {
             background: var(--card-bg);
-            padding: 60px 40px;
+            padding: 80px 40px;
             text-align: center;
-            transition: 0.3s;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card:hover { background: #0c0c0c; }
-        .card h3 { color: var(--text-dim); font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 20px; }
-        .card .val { font-size: 3.5rem; font-weight: 900; margin-bottom: 40px; }
+        .card:hover { background: #0d0d0d; }
+        .card h3 { color: var(--text-dim); font-size: 0.65rem; letter-spacing: 3px; margin-bottom: 25px; }
+        .card .val { font-size: 4rem; font-weight: 900; margin-bottom: 45px; }
         
         .buy-btn {
             display: block;
             text-decoration: none;
             color: #fff;
             border: 1px solid var(--border);
-            padding: 15px;
-            font-size: 0.8rem;
+            padding: 18px;
+            font-size: 0.75rem;
             font-weight: 700;
             transition: 0.3s;
+            letter-spacing: 1px;
         }
         .buy-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-        /* TG */
+        .footer-links {
+            margin: 80px 0;
+            display: flex;
+            gap: 20px;
+        }
+
         .tg-link {
-            margin: 60px 0;
             text-decoration: none;
-            color: var(--accent);
+            color: #fff;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border: 1px solid var(--accent);
-            padding: 15px 40px;
+            border: 1px solid var(--border);
+            padding: 15px 45px;
             transition: 0.3s;
         }
-        .tg-link:hover { background: var(--accent); color: #fff; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
+        .tg-link:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* Auth Modal */
         #modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98);
+            background: rgba(0,0,0,0.99);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
         .modal-content {
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
             text-align: center;
         }
-        .modal-content h2 { font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 30px; }
+        .modal-content h2 { font-size: 1.2rem; letter-spacing: 6px; margin-bottom: 35px; color: var(--accent); }
         .modal-content input {
             width: 100%;
             background: #000;
             border: 1px solid var(--border);
-            padding: 15px;
+            padding: 18px;
             color: #fff;
             margin-bottom: 15px;
             font-family: inherit;
+            font-size: 0.8rem;
+            text-align: center;
         }
         .modal-content input:focus { border-color: var(--accent); }
-        .close-btn { color: var(--text-dim); cursor: pointer; font-size: 0.7rem; margin-top: 20px; text-decoration: underline; }
+        .close-btn { color: var(--text-dim); cursor: pointer; font-size: 0.6rem; margin-top: 25px; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo">DESO<span>LATION</span></div>
-        <button class="client-btn" onclick="openModal()">Client Login</button>
+        <button class="client-btn" onclick="openModal()">Register</button>
     </nav>
 
     <div class="hero">
         <h1>Desolation</h1>
-        <p>REDEFINING THE STANDARDS</p>
+        <p>Project by Bankroll Mafia</p>
     </div>
 
     <div class="grid">
         <div class="card">
-            <h3>RECURRING</h3>
+            <h3>SUBSCRIPTION</h3>
             <div class="val">7 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547531" class="buy-btn" target="_blank">PURCHASE</a>
+            <a href="https://funpay.com/lots/offer?id=67547531" class="buy-btn" target="_blank">GET ACCESS</a>
         </div>
         <div class="card">
-            <h3>RECURRING</h3>
+            <h3>SUBSCRIPTION</h3>
             <div class="val">30 DAYS</div>
-            <a href="https://funpay.com/lots/offer?id=67547515" class="buy-btn" target="_blank">PURCHASE</a>
+            <a href="https://funpay.com/lots/offer?id=67547515" class="buy-btn" target="_blank">GET ACCESS</a>
         </div>
     </div>
 
-    <a href="https://t.me/desolationcheat" class="tg-link" target="_blank">Join Telegram</a>
+    <div class="footer-links">
+        <a href="https://t.me/desolationcheat" class="tg-link" target="_blank">Telegram</a>
+    </div>
 
     <div id="modal">
         <div class="modal-content">
-            <h2>INVITE ONLY</h2>
+            <h2>INVITE SYSTEM</h2>
             <input type="text" id="username" placeholder="USERNAME">
             <input type="text" id="invite" placeholder="INVITE KEY">
-            <button class="client-btn" style="width: 100%;" onclick="checkInvite()">Register</button>
-            <div class="close-btn" onclick="closeModal()">CLOSE</div>
+            <button class="client-btn" style="width: 100%;" onclick="checkInvite()">Join the Mafia</button>
+            <div class="close-btn" onclick="closeModal()">Return to shadows</div>
         </div>
     </div>
 
     <script>
-        const validInvites = ['DSLT-K92B-X10P', 'DSLT-M48R-ZQLW', 'DSLT-77VX-991A', 'DSLT-B002-HHX4', 'DSLT-PL81-KJS6'];
+        // Твои ключи
+        const validInvites = [
+            'DSLT-K92B-X10P', 
+            'DSLT-M48R-ZQLW', 
+            'DSLT-77VX-991A', 
+            'DSLT-B002-HHX4', 
+            'DSLT-PL81-KJS6'
+        ];
         
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         
         function checkInvite() {
-            const invite = document.getElementById('invite').value;
-            if(validInvites.includes(invite)) {
-                alert('Success! Welcome to Desolation.');
+            const inviteInput = document.getElementById('invite').value.trim().toUpperCase();
+            
+            if (validInvites.includes(inviteInput)) {
+                alert('Welcome to Bankroll Mafia. Registration successful.');
+                closeModal();
             } else {
-                alert('Invalid Invite Key.');
+                alert('Invalid or expired invite key.');
             }
         }
     </script>
