@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Performance Software</title>
+    <title>Desolation | Private</title>
     <style>
         :root {
             --accent: #ff0000;
             --bg: #050505;
             --card-bg: #0a0a0a;
-            --border: #141414;
+            --border: #1a1a1a;
             --text-dim: #444;
         }
 
@@ -24,6 +24,7 @@
             min-height: 100vh;
         }
 
+        /* Nav */
         nav {
             width: 100%;
             padding: 30px;
@@ -49,14 +50,16 @@
             text-transform: uppercase;
         }
 
+        /* Hero */
         .hero {
             margin-top: 20vh;
             text-align: center;
             margin-bottom: 60px;
         }
         .hero h1 { font-size: 5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .hero p { color: var(--text-dim); letter-spacing: 4px; font-size: 0.8rem; text-transform: uppercase; }
+        .hero p { color: var(--text-dim); letter-spacing: 4px; font-size: 0.8rem; }
 
+        /* Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -88,6 +91,7 @@
         }
         .buy-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
+        /* TG */
         .tg-link {
             margin: 60px 0;
             text-decoration: none;
@@ -102,6 +106,7 @@
         }
         .tg-link:hover { background: var(--accent); color: #fff; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
 
+        /* Auth Modal */
         #modal {
             display: none;
             position: fixed;
@@ -115,7 +120,6 @@
             width: 100%;
             max-width: 380px;
             text-align: center;
-            padding: 20px;
         }
         .modal-content h2 { font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 30px; }
         .modal-content input {
@@ -136,7 +140,7 @@
 
     <nav>
         <div class="logo">DESO<span>LATION</span></div>
-        <button class="client-btn" onclick="openModal()">Register</button>
+        <button class="client-btn" onclick="openModal()">Client Login</button>
     </nav>
 
     <div class="hero">
@@ -165,25 +169,20 @@
             <input type="text" id="username" placeholder="USERNAME">
             <input type="text" id="invite" placeholder="INVITE KEY">
             <button class="client-btn" style="width: 100%;" onclick="checkInvite()">Register</button>
-            <div class="close-btn" onclick="closeModal()">Close</div>
+            <div class="close-btn" onclick="closeModal()">CLOSE</div>
         </div>
     </div>
 
     <script>
-        const validInvites = [
-            'DSLT-K92B-X10P', 
-            'DSLT-M48R-ZQLW', 
-            'DSLT-77VX-991A', 
-            'DSLT-B002-HHX4', 
-            'DSLT-PL81-KJS6'
-        ];
+        const validInvites = ['DSLT-K92B-X10P', 'DSLT-M48R-ZQLW', 'DSLT-77VX-991A', 'DSLT-B002-HHX4', 'DSLT-PL81-KJS6'];
         
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         
         function checkInvite() {
-            const invite = document.getElementById('invite').value.trim().toUpperCase();
-            if(validInvites.includes(invite)) {
+            const inviteInput = document.getElementById('invite').value.trim().toUpperCase();
+            
+            if(validInvites.includes(inviteInput)) {
                 alert('Success! Welcome to Desolation.');
                 closeModal();
             } else {
