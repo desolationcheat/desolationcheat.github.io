@@ -2,228 +2,192 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>DESOLATION // 0000X1</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <title>Bankroll Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap');
-
         :root {
-            --pink: #ffb6c1; /* Пастельно-розовый стиль */
-            --bg: #030303;
-            --panel: #0a0a0a;
-            --brd: #1a1a1a;
-            --glow: 0 0 20px rgba(255, 182, 193, 0.3);
+            --neon-pink: #ffadd2; /* Пастельно-розовый из твоих предпочтений */
+            --dark-bg: #0d0d0d;
+            --card-bg: #1a1a1a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
-        body { background: var(--bg); color: #eee; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
-        
-        .neon { color: var(--pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
-        .pink-border { border: 1px solid var(--pink) !important; box-shadow: var(--glow); }
-
-        /* HEADER */
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 20px 50px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(3,3,3,0.95); border-bottom: 1px solid var(--brd); z-index: 1000;
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .nav-links { display: flex; gap: 30px; align-items: center; font-size: 0.8rem; }
-        .nav-item { cursor: pointer; color: #444; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .nav-item:hover, .nav-item.active { color: var(--pink); text-shadow: var(--glow); }
-
-        /* AUTH */
-        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 45px; width: 400px; text-align: center; position: relative; }
-        
-        input { 
-            width: 100%; background: #000; border: 1px solid var(--brd); padding: 15px; 
-            color: #fff; margin-bottom: 15px; font-family: inherit; font-size: 0.8rem;
+        .container {
+            width: 800px;
+            background: var(--card-bg);
+            border: 1px solid #333;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(255, 173, 210, 0.1);
+            position: relative;
         }
-        input:focus { border-color: var(--pink); box-shadow: var(--glow); outline: none; }
 
-        .btn-exe { 
-            width: 100%; padding: 15px; background: var(--pink); color: #000; 
-            border: none; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;
+        /* Неоновый текст */
+        .neon-text {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
-        .btn-exe:hover { transform: translateY(-2px); box-shadow: var(--glow); }
 
-        /* APP */
-        main { display: none; padding: 130px 50px 50px; flex-direction: column; align-items: center; opacity: 0; transition: 1s; }
-        .content { width: 100%; max-width: 950px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
 
-        .hero { text-align: center; margin-bottom: 70px; }
-        .hero h1 { font-size: 4.5rem; letter-spacing: 10px; }
+        .lang-switch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
 
-        .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .feat-card { background: var(--panel); border: 1px solid var(--brd); padding: 30px; border-left: 3px solid var(--pink); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-        /* PROF */
-        .prof-box { background: var(--panel); border: 1px solid var(--brd); padding: 40px; margin-top: 25px; }
-        .prof-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .uid-tag { background: var(--pink); color: #000; padding: 3px 10px; font-size: 0.7rem; font-weight: 800; border-radius: 2px; }
+        .stat-item {
+            text-align: left;
+        }
 
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-item { background: #000; padding: 20px; border: 1px solid #111; }
-        .stat-lbl { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .stat-val { font-size: 0.85rem; color: #fff; font-weight: 700; }
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
 
-        .hidden { display: none !important; }
-        .lang-switch { font-size: 1.2rem; cursor: pointer; filter: grayscale(1); transition: 0.2s; }
-        .lang-switch.active { filter: grayscale(0); transform: scale(1.1); }
+        .stat-value {
+            font-size: 18px;
+            font-family: monospace;
+        }
+
+        .invites-box {
+            background: #000;
+            padding: 20px;
+            border: 1px solid #222;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--neon-pink);
+            margin-bottom: 20px;
+            min-height: 50px;
+            word-break: break-all;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid #333;
+            color: white;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            border-color: var(--neon-pink);
+            box-shadow: inset 0 0 10px rgba(255, 173, 210, 0.2);
+        }
+
+        .flags img {
+            width: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+            opacity: 0.6;
+        }
+
+        .flags img:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <section id="auth-screen">
-        <div class="auth-card pink-border">
-            <h2 class="neon" style="margin-bottom: 35px;">Access System</h2>
-            <div id="login-box">
-                <input type="text" id="l-u" placeholder="USERNAME">
-                <input type="password" id="l-p" placeholder="PASSWORD">
-                <button class="btn-exe" onclick="doLogin()">AUTHENTICATE</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="toggleA(true)">[ NO ACCESS? REGISTER ]</p>
-            </div>
-            <div id="reg-box" class="hidden">
-                <input type="text" id="r-u" placeholder="NEW USERNAME">
-                <input type="password" id="r-p" placeholder="NEW PASSWORD">
-                <input type="text" id="r-i" placeholder="INVITE CODE">
-                <button class="btn-exe" onclick="doReg()">REGISTER</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="toggleA(false)">[ ALREADY REGISTERED ]</p>
-            </div>
-        </div>
-    </section>
+    <div class="lang-switch flags">
+        <img src="https://flagcdn.com/ru.svg" onclick="setLang('ru')" alt="RU">
+        <img src="https://flagcdn.com/us.svg" onclick="setLang('en')" alt="EN">
+    </div>
 
-    <nav>
-        <div class="neon" style="font-size: 1.5rem; letter-spacing: 3px; cursor: pointer;" onclick="go('h')">DESOLATION</div>
-        <div class="nav-links">
-            <div class="nav-item active" onclick="go('h')" id="n-h"><span>📂</span> HOME</div>
-            <div class="nav-item" onclick="go('p')" id="n-p"><span>👤</span> PROFILE</div>
-            <a href="https://t.me/desolation_samp" class="nav-item" target="_blank"><span>💬</span> TELEGRAM</a>
-            <div style="display: flex; gap: 12px; margin-left: 20px;">
-                <span class="lang-switch active" id="f-ru" onclick="setL('RU')">🇷🇺</span>
-                <span class="lang-switch" id="f-en" onclick="setL('EN')">🇺🇸</span>
-            </div>
+    <div class="container">
+        <div class="header">
+            <div class="neon-text" id="user-id">ID: RYODEU</div>
+            <div style="font-size: 10px; color: #666;">АВТОРИЗОВАН</div>
         </div>
-    </nav>
 
-    <main id="main-app">
-        <div id="page-h" class="content">
-            <div class="hero">
-                <h1 class="neon">DESOLATION</h1>
-                <p style="color: #333; letter-spacing: 12px; font-size: 0.65rem; margin-top: 10px;">PREMIUM INTERNAL SOFTWARE // SAMP</p>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label">Статус подписки</span>
+                <span class="stat-value neon-text" id="sub-status">ACTIVE</span>
             </div>
-            <div class="feat-grid">
-                <div class="feat-card">
-                    <h4 class="neon" style="font-size: 0.9rem;">Combat.asi</h4>
-                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;" id="t-f1">Silent Aimbot, Wallshot и авто-шот с кастомным FOV.</p>
-                </div>
-                <div class="feat-card">
-                    <h4 class="neon" style="font-size: 0.9rem;">Visuals.lua</h4>
-                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;" id="t-f2">ESP Bones, Lines и розовый интерфейс mimgui.</p>
-                </div>
+            <div class="stat-item">
+                <span class="stat-label">Кем приглашен</span>
+                <span class="stat-value" id="invited-by">SYSTEM</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Дата регистрации</span>
+                <span class="stat-value" id="reg-date">01.05.2026</span>
             </div>
         </div>
 
-        <div id="page-p" class="content hidden">
-            <div class="prof-box pink-border">
-                <div class="prof-top">
-                    <h3 class="neon" style="font-size: 1.8rem;"><span id="disp-u">USER</span> <span class="uid-badge">UID: <span id="disp-uid">0</span></span></h3>
-                    <div id="adm-tag" class="hidden" style="color:var(--pink); font-size:0.7rem; border:1px solid var(--pink); padding:4px 10px;">AUTHORITY</div>
-                </div>
-                
-                <div class="stats-row">
-                    <div class="stat-item"><span class="stat-lbl" id="l-s">STATUS</span><span class="stat-val neon">ACTIVE</span></div>
-                    <div class="stat-item"><span class="stat-lbl" id="l-b">INVITED BY</span><span class="stat-val" id="disp-by">SYSTEM</span></div>
-                    <div class="stat-item"><span class="stat-lbl" id="l-d">JOIN DATE</span><span class="stat-val" id="disp-date">--.--.--</span></div>
-                    <div class="stat-item"><span class="stat-lbl" id="l-r">CARD TIER</span><span class="stat-val neon" style="font-size: 0.7rem;">NONE</span></div>
-                </div>
-
-                <div style="margin-top: 25px;">
-                    <span class="stat-lbl" id="l-i">YOUR INVITE CODES</span>
-                    <div style="background: #000; padding: 20px; border: 1px solid #111; color: var(--pink); font-size: 0.8rem; margin: 15px 0; font-family: monospace;" id="disp-invs">---</div>
-                    <button class="btn-exe" style="background: #111; color: #fff; border: 1px solid #222;" onclick="genInv()" id="btn-g">GENERATE INVITE</button>
-                </div>
-            </div>
+        <span class="stat-label">Ваши инвайт коды</span>
+        <div class="invites-box" id="invites-list">
+            DS-L-FSS0J9G6KA-T3MV | DS-L-7TKIT754CH-KOEA | DS-L-UPY1HOHVBE-XB1Z
         </div>
-    </main>
 
-    <script>
-        const firebaseConfig = { apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", authDomain: "desolationcheat.firebaseapp.com", databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com", projectId: "desolationcheat" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        <button class="btn" onclick="generateInvite()">Создать новый инвайт</button>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="btn" style="text-decoration: none; text-align: center; font-size: 12px;">Купить неделю</a>
+            <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="btn" style="text-decoration: none; text-align: center; font-size: 12px;">Купить месяц</a>
+        </div>
+    </div>
 
-        let uData = null, curU = "";
-        const langData = {
-            RU: { f1: "Silent Aimbot, Wallshot и авто-шот с кастомным FOV.", f2: "ESP Bones, Lines и розовый интерфейс mimgui.", s: "СТАТУС", b: "ПРИГЛАСИЛ", d: "ДАТА", r: "ТИР КАРТЫ", i: "ВАШИ ИНВАЙТЫ", g: "СОЗДАТЬ КОД" },
-            EN: { f1: "Silent Aimbot, Wallshot and Auto-shot with custom FOV.", f2: "ESP Bones, Lines and pink mimgui interface.", s: "STATUS", b: "INVITED BY", d: "JOIN DATE", r: "CARD TIER", i: "YOUR INVITES", g: "GENERATE INVITE" }
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0",
+            authDomain: "desolationcheat.firebaseapp.com",
+            databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com",
+            projectId: "desolationcheat",
+            storageBucket: "desolationcheat.firebasestorage.app",
+            messagingSenderId: "437522470275",
+            appId: "1:437522470275:web:5b20d57e9907100ec712b6"
         };
 
-        function setL(l) {
-            document.getElementById('f-ru').classList.toggle('active', l==='RU');
-            document.getElementById('f-en').classList.toggle('active', l==='EN');
-            document.getElementById('t-f1').innerText = langData[l].f1; document.getElementById('t-f2').innerText = langData[l].f2;
-            document.getElementById('l-s').innerText = langData[l].s; document.getElementById('l-b').innerText = langData[l].b;
-            document.getElementById('l-d').innerText = langData[l].d; document.getElementById('l-r').innerText = langData[l].r;
-            document.getElementById('l-i').innerText = langData[l].i; document.getElementById('btn-g').innerText = langData[l].g;
-        }
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-        function toggleA(r) {
-            document.getElementById('login-box').classList.toggle('hidden', r);
-            document.getElementById('reg-box').classList.toggle('hidden', !r);
-        }
+        // Логика для Ryodeu
+        window.currentUser = "ryodeu"; 
 
-        async function doLogin() {
-            const u = document.getElementById('l-u').value.toLowerCase().trim();
-            const p = document.getElementById('l-p').value.trim();
-            const snap = await db.ref('users/'+u).get();
-            if(snap.exists() && snap.val().password === p) {
-                curU = u; uData = snap.val();
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').style.display = 'flex';
-                setTimeout(() => document.getElementById('main-app').style.opacity = '1', 100);
-                init();
-            } else alert("INVALID ACCESS DATA");
-        }
-
-        async function doReg() {
-            const u = document.getElementById('r-u').value.toLowerCase().trim();
-            const p = document.getElementById('r-p').value.trim(), i = document.getElementById('r-i').value.trim();
-            const inv = await db.ref('invites/'+i).get();
-            if(inv.exists() && inv.val().active) {
-                const count = (await db.ref('stats/userCount').get()).val() || 0;
-                await db.ref('users/'+u).set({ password:p, by:inv.val().gen_by||"SYSTEM", date:new Date().toLocaleDateString(), uid: count+1, invs:[] });
-                await db.ref('invites/'+i).update({ active:false });
-                await db.ref('stats/userCount').set(count+1);
-                alert("REGISTRATION COMPLETE"); toggleA(false);
-            } else alert("INVITE CODE INVALID");
-        }
-
-        function init() {
-            document.getElementById('disp-u').innerText = curU.toUpperCase();
-            document.getElementById('disp-uid').innerText = uData.uid || "0";
-            document.getElementById('disp-by').innerText = uData.by || "SYSTEM";
-            document.getElementById('disp-date').innerText = uData.date || "05.05.2026";
-            document.getElementById('disp-invs').innerText = (uData.invs || []).join(' | ') || "NO ACTIVE CODES";
-            if(curU==='ryodeu'||curU==='dev') document.getElementById('adm-tag').classList.remove('hidden');
-            setL('RU');
-        }
-
-        async function genInv() {
-            const code = "DSL-" + Math.random().toString(36).substring(2,8).toUpperCase();
-            await db.ref('invites/'+code).set({ active:true, gen_by:curU });
-            let my = uData.invs || []; my.push(code);
-            await db.ref('users/'+curU).update({ invs:my });
-            uData.invs = my; init();
-        }
-
-        function go(t) {
-            document.getElementById('page-h').classList.toggle('hidden', t!=='h');
-            document.getElementById('page-p').classList.toggle('hidden', t!=='p');
-            document.getElementById('n-h').classList.toggle('active', t==='h');
-            document.getElementById('n-p').classList.toggle('active', t==='p');
-        }
+        window.generateInvite = async () => {
+            if(window.currentUser !== "ryodeu") {
+                alert("Лимит: 2 инвайта в месяц!");
+                return;
+            }
+            const newCode = "DS-L-" + Math.random().toString(36).substring(2, 12).toUpperCase();
+            document.getElementById('invites-list').innerHTML += " | " + newCode;
+            // Здесь будет запись в Firebase
+        };
     </script>
 </body>
 </html>
