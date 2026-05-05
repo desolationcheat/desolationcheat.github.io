@@ -14,195 +14,148 @@
             --dark-bg: #030303;
             --panel: #0a0a0a;
             --brd: #1a1a1a;
-            --glow: 0 0 20px rgba(255, 182, 193, 0.3);
+            --glow: 0 0 15px rgba(255, 182, 193, 0.2);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
         body { background: var(--dark-bg); color: #eee; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
 
-        /* Intro Animation */
+        /* Intro & Typewriter */
         #intro {
             position: fixed; inset: 0; background: #000; z-index: 3000;
             display: flex; justify-content: center; align-items: center;
-            animation: fadeOut 1.5s ease 2s forwards;
+            animation: fadeOut 1s ease 3s forwards;
         }
-        .intro-title {
-            font-family: 'Orbitron'; font-size: 5rem; color: var(--neon-pink);
-            text-shadow: var(--glow); letter-spacing: 15px;
-            opacity: 0; animation: fadeInOut 2s ease forwards;
+        .typewriter {
+            font-family: 'Orbitron'; font-size: 4rem; color: var(--neon-pink);
+            text-shadow: var(--glow); letter-spacing: 10px;
+            overflow: hidden; border-right: .15em solid var(--neon-pink);
+            white-space: nowrap; width: 0;
+            animation: typing 1.5s steps(10, end) forwards, blink-caret .75s step-end infinite;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.9); filter: blur(10px); }
-            50% { opacity: 1; transform: scale(1); filter: blur(0); }
-            100% { opacity: 0; transform: scale(1.1); filter: blur(5px); }
-        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--neon-pink); } }
         @keyframes fadeOut { to { visibility: hidden; opacity: 0; } }
 
-        /* UI Transitions */
-        .page-anim { animation: pageIn 0.6s ease-out forwards; }
-        @keyframes pageIn {
-            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        /* Shop Buttons from image_e3ef02.png */
+        .shop-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .buy-card {
+            border: 1px solid var(--brd); background: transparent;
+            padding: 25px; display: flex; align-items: center; justify-content: center;
+            gap: 12px; text-decoration: none; color: #fff;
+            font-family: 'Orbitron'; font-size: 0.75rem; transition: 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .buy-card:hover { border-color: #444; background: rgba(255,255,255,0.02); }
+        .buy-card i { font-size: 0.9rem; }
+
+        /* Profile UID Styling */
+        .uid-badge {
+            background: linear-gradient(90deg, rgba(255,182,193,0.1), transparent);
+            border-left: 2px solid var(--neon-pink);
+            padding: 5px 12px; display: inline-block; margin-top: 5px;
         }
 
-        .neon-txt { color: var(--neon-pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
-        
+        /* Standard UI */
         nav {
             position: fixed; top: 0; width: 100%; padding: 20px 40px;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(3,3,3,0.9); border-bottom: 1px solid var(--brd); z-index: 1000; backdrop-filter: blur(10px);
+            background: rgba(3,3,3,0.95); border-bottom: 1px solid var(--brd); z-index: 1000;
         }
+        .neon-txt { color: var(--neon-pink); text-shadow: var(--glow); font-family: 'Orbitron'; }
+        
+        main { display: none; padding: 120px 20px 50px; flex-direction: column; align-items: center; height: 100vh; overflow-y: auto; }
+        .content-box { width: 100%; max-width: 900px; animation: pageIn 0.5s ease-out; }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .logo { cursor: pointer; transition: 0.3s; }
-        .logo:hover { transform: scale(1.05); }
+        .feature-item { margin-bottom: 15px; font-size: 0.8rem; color: #777; }
+        .feature-item b { color: var(--neon-pink); margin-right: 5px; }
 
-        .nav-items { display: flex; gap: 30px; align-items: center; font-size: 0.75rem; }
-        .nav-link { cursor: pointer; color: #666; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .nav-link:hover, .nav-link.active { color: var(--neon-pink); text-shadow: var(--glow); }
+        .btn-gen {
+            background: none; border: 1px solid var(--brd); color: #555;
+            padding: 10px 20px; font-family: 'Orbitron'; font-size: 0.6rem;
+            cursor: pointer; transition: 0.3s; margin-top: 15px;
+        }
+        .btn-gen:hover:not(:disabled) { border-color: var(--neon-pink); color: var(--neon-pink); }
+        .btn-gen:disabled { opacity: 0.3; cursor: not-allowed; }
 
         #auth-page { position: fixed; inset: 0; background: var(--dark-bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 50px; width: 400px; text-align: center; box-shadow: var(--glow); }
-        
-        input { 
-            width: 100%; background: #000; border: 1px solid var(--brd); padding: 15px; 
-            color: #fff; margin-bottom: 15px; font-family: inherit; transition: 0.3s;
-        }
-        input:focus { border-color: var(--neon-pink); outline: none; }
-
-        .btn { 
-            width: 100%; padding: 15px; background: var(--neon-pink); color: #000; 
-            border: none; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;
-        }
-        .btn:hover { letter-spacing: 2px; box-shadow: var(--glow); }
-
-        main { display: none; padding: 120px 20px 50px; flex-direction: column; align-items: center; height: 100vh; overflow-y: auto; }
-        .content-box { width: 100%; max-width: 1000px; }
-
-        /* Features Section */
-        .desc-block { background: var(--panel); border: 1px solid var(--brd); padding: 30px; margin-bottom: 30px; border-left: 3px solid var(--neon-pink); }
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .f-card { background: #070707; border: 1px solid #111; padding: 25px; transition: 0.3s; }
-        .f-card:hover { border-color: var(--neon-pink); }
-        .f-card i { color: var(--neon-pink); margin-bottom: 15px; font-size: 1.5rem; }
-
-        /* Shop Section */
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        .buy-btn { 
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            background: transparent; border: 1px solid #333; color: #fff; padding: 20px; 
-            text-decoration: none; font-family: 'Orbitron'; font-size: 0.8rem; transition: 0.3s;
-        }
-        .buy-btn:hover { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,182,193,0.05); }
+        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 40px; width: 350px; text-align: center; }
+        input { width: 100%; background: #000; border: 1px solid var(--brd); padding: 12px; color: #fff; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; }
+        .primary-btn { width: 100%; padding: 12px; background: var(--neon-pink); color: #000; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="intro"><div class="intro-title">DESOLATION</div></div>
+    <div id="intro"><div class="typewriter">DESOLATION</div></div>
 
     <section id="auth-page">
         <div class="auth-card">
-            <h2 class="neon-txt" style="margin-bottom: 30px;">Access Terminal</h2>
+            <h2 class="neon-txt" style="margin-bottom: 25px; font-size: 1rem;">Terminal.exe</h2>
             <div id="box-l">
                 <input type="text" id="l-u" placeholder="LOGIN">
                 <input type="password" id="l-p" placeholder="PASSWORD">
-                <button class="btn" onclick="login()">IDENTIFY</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="swap(true)">[ CREATE ACCESS ]</p>
+                <button class="primary-btn" onclick="login()">ENTER</button>
+                <p style="font-size: 0.5rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(true)">[ NO ACCESS? REGISTER ]</p>
             </div>
             <div id="box-r" class="hidden">
                 <input type="text" id="r-u" placeholder="USERNAME">
                 <input type="password" id="r-p" placeholder="PASSWORD">
                 <input type="text" id="r-i" placeholder="INVITE CODE">
-                <button class="btn" onclick="register()">REGISTER</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="swap(false)">[ BACK ]</p>
+                <button class="primary-btn" onclick="register()">CREATE</button>
+                <p style="font-size: 0.5rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(false)">[ BACK ]</p>
             </div>
         </div>
     </section>
 
     <nav>
-        <div class="neon-txt logo" style="font-size: 1.4rem;" onclick="tab('h')">DESOLATION</div>
-        <div class="nav-items">
-            <div class="nav-link active" onclick="tab('h')" id="n-h"><i class="fa-solid fa-house"></i> HOME</div>
-            <div class="nav-link" onclick="tab('p')" id="n-p"><i class="fa-solid fa-user-secret"></i> PROFILE</div>
-            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank"><i class="fa-brands fa-telegram"></i> TELEGRAM</a>
+        <div class="neon-txt" style="font-size: 1.2rem; cursor:pointer" onclick="tab('h')">DESOLATION</div>
+        <div style="display: flex; gap: 25px; font-size: 0.7rem;">
+            <div onclick="tab('h')" style="cursor:pointer"><i class="fa-solid fa-ghost"></i> MAIN</div>
+            <div onclick="tab('p')" style="cursor:pointer"><i class="fa-solid fa-id-card"></i> PROFILE</div>
+            <a href="https://t.me/desolation_samp" target="_blank" style="text-decoration:none; color:inherit"><i class="fa-brands fa-telegram"></i> TELEGRAM</a>
         </div>
     </nav>
 
     <main id="app">
-        <!-- HOME PAGE -->
-        <div id="vh" class="content-box page-anim">
-            <div class="desc-block">
-                <h3 class="neon-txt" style="margin-bottom: 10px;">Project Overview</h3>
-                <p style="color: #888; font-size: 0.85rem; line-height: 1.6;">
-                    Лучшее решение для доминации в SAMP. Мы объединили мощный функционал с самым эстетичным интерфейсом на рынке. 
-                    Наш софт предоставляет полный контроль над игровым процессом без лишних сложностей.
-                </p>
+        <div id="vh" class="content-box">
+            <div style="border-left: 2px solid var(--neon-pink); padding-left: 20px; margin-bottom: 40px;">
+                <h3 class="neon-txt" style="font-size: 0.9rem; margin-bottom: 10px;">SYSTEM STATUS: ONLINE</h3>
+                <div id="type-desc" style="font-size: 0.75rem; color: #555; min-height: 50px; line-height: 1.6;"></div>
             </div>
 
-            <div class="feature-grid">
-                <div class="f-card">
-                    <i class="fa-solid fa-crosshairs"></i>
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Silent Aimbot</h4>
-                    <p style="font-size: 0.7rem; color: #555; margin-top: 10px;">
-                        Бесшумный аим с идеальной точностью. Настраиваемый FOV, смуч и проверка на видимость противника.
-                    </p>
-                </div>
-                <div class="f-card">
-                    <i class="fa-solid fa-eye"></i>
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Visuals & ESP</h4>
-                    <p style="font-size: 0.7rem; color: #555; margin-top: 10px;">
-                        Wallhack нового поколения: Bones, Lines, Box и информация об оружии/HP в реальном времени.
-                    </p>
-                </div>
-                <div class="f-card">
-                    <i class="fa-solid fa-bolt"></i>
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Wallshot</h4>
-                    <p style="font-size: 0.7rem; color: #555; margin-top: 10px;">
-                        Пробитие текстур с умным алгоритмом обхода. Доминируй там, где другие бессильны.
-                    </p>
-                </div>
-                <div class="f-card">
-                    <i class="fa-solid fa-palette"></i>
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Mimgui Menu</h4>
-                    <p style="font-size: 0.7rem; color: #555; margin-top: 10px;">
-                        Удобная и плавная менюшка в пастельно-розовых тонах. Полная кастомизация под твой вкус.
-                    </p>
-                </div>
-            </div>
-
-            <div class="shop-grid">
-                <a href="https://funpay.com/lots/offer?id=34015694" class="buy-btn" target="_blank">
-                    <i class="fa-solid fa-cart-shopping"></i> BUY 7 DAYS (150₽)
-                </a>
-                <a href="https://funpay.com/lots/offer?id=34015694" class="buy-btn" target="_blank">
-                    <i class="fa-solid fa-crown"></i> BUY 30 DAYS (400₽)
-                </a>
+            <div class="shop-container">
+                <a href="#" class="buy-card"><i class="fa-solid fa-cart-shopping"></i> Buy 7 Days (150₽)</a>
+                <a href="#" class="buy-card"><i class="fa-solid fa-crown"></i> Buy 30 Days (400₽)</a>
             </div>
         </div>
 
-        <!-- PROFILE PAGE -->
-        <div id="vp" class="content-box hidden page-anim">
-            <div style="background: var(--panel); border: 1px solid var(--brd); padding: 40px; border-top: 3px solid var(--neon-pink);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div id="vp" class="content-box hidden">
+            <div style="background: var(--panel); border: 1px solid var(--brd); padding: 30px;">
+                <h2 class="neon-txt" id="u-display" style="font-size: 1.5rem;">USER</h2>
+                <div class="uid-badge">
+                    <span style="font-size: 0.6rem; color: #888; text-transform: uppercase;">User ID:</span>
+                    <span id="u-uid" style="font-size: 0.7rem; color: #fff; font-weight: bold; margin-left: 5px;">000</span>
+                </div>
+
+                <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
-                        <h2 class="neon-txt" id="u-display">USER</h2>
-                        <span style="color: #444; font-size: 0.7rem;">UID: <span id="u-uid" style="color:var(--neon-pink)">0</span></span>
+                        <p style="font-size: 0.55rem; color: #333;">SUBSCRIPTION STATUS</p>
+                        <p id="u-sub" style="font-size: 0.75rem; color: #0f0;">LIFETIME</p>
                     </div>
-                    <button id="rename-btn" class="hidden btn" onclick="rename()" style="width: auto; padding: 5px 15px; font-size: 0.6rem;">RENAME</button>
+                    <div>
+                        <p style="font-size: 0.55rem; color: #333;">RANK</p>
+                        <p id="u-rank" style="font-size: 0.75rem; color: var(--neon-pink);">USER</p>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 30px 0;">
-                    <div style="background: #000; padding: 15px;"><small style="color:#333; display:block">RANK</small><span id="u-rank" class="neon-txt" style="font-size: 0.8rem;">USER</span></div>
-                    <div style="background: #000; padding: 15px;"><small style="color:#333; display:block">CREATED BY</small><span id="u-by" style="font-size: 0.8rem;">SYSTEM</span></div>
-                    <div style="background: #000; padding: 15px;"><small style="color:#333; display:block">JOINED</small><span id="u-date" style="font-size: 0.8rem;">-</span></div>
-                </div>
-
-                <div id="invite-section">
-                    <h5 class="neon-txt" style="font-size: 0.7rem; margin-bottom: 10px;">INVITE MANAGEMENT</h5>
-                    <div id="u-invs" style="background: #000; padding: 15px; color: var(--neon-pink); font-size: 0.7rem; border: 1px dashed #222; margin-bottom: 10px;">EMPTY</div>
-                    <button id="gen-btn" class="btn hidden" style="background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);" onclick="gen()">GENERATE NEW ACCESS CODE</button>
+                <div style="margin-top: 40px; border-top: 1px solid #111; pt: 20px;">
+                    <p style="font-size: 0.6rem; color: #444; margin-bottom: 10px;">INVITE MANAGEMENT (LIMIT: 2/MONTH)</p>
+                    <div id="u-invs" style="font-size: 0.65rem; color: #666; margin-bottom: 10px;"></div>
+                    <button id="gen-btn" class="btn-gen" onclick="gen()">GENERATE CODE</button>
                 </div>
             </div>
         </div>
@@ -219,6 +172,21 @@
         const db = firebase.database();
 
         let user = null, uid = "";
+        const descText = "Silent Aim, Wallshot, ESP (Bones/Boxes), Настраиваемый конфиг и самый красивый визуал на рынке SAMP. Подключайся к элите прямо сейчас.";
+
+        function typeWriter(id, text, speed = 30) {
+            let i = 0;
+            const el = document.getElementById(id);
+            el.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    el.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
 
         function swap(r) {
             document.getElementById('box-l').classList.toggle('hidden', r);
@@ -234,6 +202,7 @@
                 document.getElementById('auth-page').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
                 load();
+                typeWriter('type-desc', descText);
             } else alert("ACCESS DENIED");
         }
 
@@ -244,9 +213,15 @@
             
             if(inv.exists() && inv.val().active) {
                 const count = (await db.ref('stats/userCount').get()).val() || 0;
-                const role = (u === 'ryodeu' || u === 'dev') ? "None" : "USER"; //
-                
-                await db.ref('users/'+u).set({ password: p, by: inv.val().gen_by, date: new Date().toLocaleDateString(), uid: count + 1, rank: role });
+                await db.ref('users/'+u).set({ 
+                    password: p, 
+                    by: inv.val().gen_by, 
+                    date: new Date().toLocaleDateString(), 
+                    uid: count + 1, 
+                    rank: "USER",
+                    gen_count: 0,
+                    last_gen_month: new Date().getMonth()
+                });
                 await db.ref('invites/'+i).update({ active: false });
                 await db.ref('stats/userCount').set(count + 1);
                 alert("SUCCESS"); swap(false);
@@ -255,46 +230,41 @@
 
         function load() {
             document.getElementById('u-display').innerText = uid.toUpperCase();
-            document.getElementById('u-uid').innerText = user.uid;
-            document.getElementById('u-by').innerText = user.by || "SYSTEM";
-            document.getElementById('u-date').innerText = user.date;
+            document.getElementById('u-uid').innerText = String(user.uid).padStart(3, '0');
+            document.getElementById('u-rank').innerText = user.rank || "USER";
+            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "NO CODES GENERATED";
             
-            const isNone = (uid === 'ryodeu' || uid === 'dev' || user.rank === 'None'); //
-            document.getElementById('u-rank').innerText = isNone ? "None" : "USER";
-            document.getElementById('rename-btn').classList.toggle('hidden', !isNone);
-            document.getElementById('gen-btn').classList.toggle('hidden', !isNone); // Ограничение инвайтов
-            
-            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "NO ACTIVE CODES";
+            // Проверка лимитов для кнопки
+            const currentMonth = new Date().getMonth();
+            if (user.last_gen_month !== currentMonth) {
+                db.ref('users/'+uid).update({ gen_count: 0, last_gen_month: currentMonth });
+                user.gen_count = 0;
+            }
+            if (user.gen_count >= 2 && user.rank !== "None") {
+                document.getElementById('gen-btn').disabled = true;
+                document.getElementById('gen-btn').innerText = "LIMIT REACHED";
+            }
         }
 
         async function gen() {
+            if (user.gen_count >= 2 && user.rank !== "None") return;
+            
             const code = "DSL-" + Math.random().toString(36).substring(2,8).toUpperCase();
             await db.ref('invites/'+code).set({ active: true, gen_by: uid });
-            let my = user.invs || []; my.push(code);
-            await db.ref('users/'+uid).update({ invs: my });
-            user.invs = my; load();
+            
+            let my = user.invs || [];
+            my.push(code);
+            const newCount = (user.gen_count || 0) + 1;
+            
+            await db.ref('users/'+uid).update({ invs: my, gen_count: newCount });
+            user.invs = my; user.gen_count = newCount;
+            load();
         }
 
         function tab(t) {
-            const vh = document.getElementById('vh'), vp = document.getElementById('vp');
-            const nh = document.getElementById('n-h'), np = document.getElementById('n-p');
-            
-            vh.classList.toggle('hidden', t!=='h');
-            vp.classList.toggle('hidden', t!=='p');
-            nh.classList.toggle('active', t==='h');
-            np.classList.toggle('active', t==='p');
-        }
-
-        async function rename() {
-            const n = prompt("NEW NICK:").toLowerCase().trim();
-            if(n && n !== uid) {
-                const s = await db.ref('users/'+n).get();
-                if(!s.exists()) {
-                    await db.ref('users/'+n).set(user);
-                    await db.ref('users/'+uid).remove();
-                    location.reload();
-                }
-            }
+            document.getElementById('vh').classList.toggle('hidden', t!=='h');
+            document.getElementById('vp').classList.toggle('hidden', t!=='p');
+            if(t === 'h') typeWriter('type-desc', descText);
         }
     </script>
 </body>
