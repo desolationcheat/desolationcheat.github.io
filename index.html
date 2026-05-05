@@ -2,82 +2,224 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desolation | Absolute Dominance</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>DESOLATION // GEN-3</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;500&display=swap');
+
+        :root {
+            --neon-pink: #ffb6c1;
+            --dark-bg: #030303;
+            --panel: #0a0a0a;
+            --brd: #1a1a1a;
+            --glow: 0 0 15px rgba(255, 182, 193, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+        body { background: var(--dark-bg); color: #eee; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
+
+        .neon-txt { color: var(--neon-pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
+        .pink-glow { border: 1px solid var(--neon-pink) !important; box-shadow: var(--glow); }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(3,3,3,0.9); border-bottom: 1px solid var(--brd); z-index: 1000; backdrop-filter: blur(10px);
+        }
+
+        .nav-items { display: flex; gap: 25px; align-items: center; font-size: 0.8rem; }
+        .nav-link { cursor: pointer; color: #555; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .nav-link:hover, .nav-link.active { color: var(--neon-pink); text-shadow: var(--glow); }
+
+        /* AUTH */
+        #auth-page { position: fixed; inset: 0; background: var(--dark-bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 40px; width: 380px; text-align: center; }
+        
+        input { 
+            width: 100%; background: #000; border: 1px solid var(--brd); padding: 14px; 
+            color: #fff; margin-bottom: 12px; font-family: inherit; font-size: 0.8rem; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon-pink); box-shadow: var(--glow); }
+
+        .btn { 
+            width: 100%; padding: 14px; background: var(--neon-pink); color: #000; 
+            border: none; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;
+        }
+        .btn:hover { transform: scale(1.02); box-shadow: var(--glow); }
+
+        /* MAIN */
+        main { display: none; padding-top: 120px; flex-direction: column; align-items: center; width: 100%; opacity: 0; transition: 1s; }
+        .content-box { width: 90%; max-width: 900px; }
+
+        .header-block { text-align: center; margin-bottom: 60px; }
+        .header-block h1 { font-size: 4rem; letter-spacing: 5px; }
+
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .f-card { background: var(--panel); border: 1px solid var(--brd); padding: 25px; position: relative; }
+        .f-card::after { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--neon-pink); }
+
+        /* PROFILE */
+        .profile-ui { background: var(--panel); border: 1px solid var(--brd); padding: 35px; margin-top: 20px; }
+        .ui-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+        .ui-item { background: #000; padding: 15px; border: 1px solid #111; }
+        .ui-label { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .ui-val { font-size: 0.8rem; color: #fff; }
+
+        .uid-badge { background: var(--neon-pink); color: #000; padding: 2px 8px; font-size: 0.7rem; font-weight: 900; margin-left: 10px; border-radius: 2px; }
+
+        .hidden { display: none !important; }
+        .lang-ico { font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; cursor: pointer; }
+        .lang-ico.active { filter: grayscale(0); transform: scale(1.2); }
+    </style>
 </head>
 <body>
-    <div class="vignette"></div>
-    <div class="scanlines"></div>
+
+    <section id="auth-page">
+        <div class="auth-card pink-glow">
+            <h2 class="neon-txt" style="margin-bottom: 25px;">Identification</h2>
+            <div id="box-l">
+                <input type="text" id="l-u" placeholder="LOGIN">
+                <input type="password" id="l-p" placeholder="PASSWORD">
+                <button class="btn" onclick="login()">EXECUTE</button>
+                <p style="font-size: 0.6rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(true)">[ CREATE ACCESS ]</p>
+            </div>
+            <div id="box-r" class="hidden">
+                <input type="text" id="r-u" placeholder="USERNAME">
+                <input type="password" id="r-p" placeholder="PASSWORD">
+                <input type="text" id="r-i" placeholder="INVITE CODE">
+                <button class="btn" onclick="register()">REGISTER</button>
+                <p style="font-size: 0.6rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(false)">[ BACK TO LOGIN ]</p>
+            </div>
+        </div>
+    </section>
 
     <nav>
-        <div class="nav-content">
-            <div class="logo-mini">DESOLATION</div>
-            <button class="login-btn" onclick="openLogin()">LOGIN</button>
+        <div class="neon-txt" style="font-size: 1.3rem; letter-spacing: 2px;">DESOLATION</div>
+        <div class="nav-items">
+            <div class="nav-link active" onclick="tab('h')" id="n-h"><span>🏠</span> HOME</div>
+            <div class="nav-link" onclick="tab('p')" id="n-p"><span>👤</span> PROFILE</div>
+            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank"><span>📢</span> TG</a>
+            <div style="display: flex; gap: 10px; margin-left: 15px;">
+                <span class="lang-ico active" id="f-ru" onclick="setL('RU')">🇷🇺</span>
+                <span class="lang-ico" id="f-en" onclick="setL('EN')">🇺🇸</span>
+            </div>
         </div>
     </nav>
 
-    <main class="main-wrapper">
-        <section class="hero">
-            <h1 class="glitch-text" data-text="DESOLATION">DESOLATION</h1>
-            <p class="tagline">PRIVATE SOFTWARE FOR PROFESSIONAL PLAYERS</p>
-        </section>
-
-        <section class="pricing">
-            <!-- Неделя -->
-            <div class="card">
-                <div class="card-inner">
-                    <h3>WEEK SUBSCRIPTION</h3>
-                    <div class="price">7 DAYS</div>
-                    <ul class="features">
-                        <li>Full Cheat Access</li>
-                        <li>Automated Setup</li>
-                        <li>24/7 Support</li>
-                    </ul>
-                    <a href="https://funpay.com/lots/offer?id=67547531" target="_blank" class="buy-button">PURCHASE</a>
+    <main id="app">
+        <div id="vh" class="content-box">
+            <div class="header-block">
+                <h1 class="neon-txt">DESOLATION</h1>
+                <p style="color: #444; letter-spacing: 8px; font-size: 0.6rem;">INTERNAL_PROJECT // SAMP</p>
+            </div>
+            <div class="feature-grid">
+                <div class="f-card">
+                    <h4 class="neon-txt" style="font-size: 0.8rem;">Combat.lua</h4>
+                    <p style="font-size: 0.7rem; color: #666; margin-top: 8px;" id="f1-t">Silent Aimbot, Wallshot и авто-шот с кастомным FOV.</p>
+                </div>
+                <div class="f-card">
+                    <h4 class="neon-txt" style="font-size: 0.8rem;">Visuals.mimgui</h4>
+                    <p style="font-size: 0.7rem; color: #666; margin-top: 8px;" id="f2-t">ESP Bones, Lines и розовый интерфейс в стиле mimgui.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Месяц -->
-            <div class="card premium">
-                <div class="card-inner">
-                    <div class="popular-tag">BEST VALUE</div>
-                    <h3>MONTH SUBSCRIPTION</h3>
-                    <div class="price">30 DAYS</div>
-                    <ul class="features">
-                        <li>Full Cheat Access</li>
-                        <li>Priority Support</li>
-                        <li>Cloud Configs</li>
-                    </ul>
-                    <a href="https://funpay.com/lots/offer?id=67547515" target="_blank" class="buy-button">PURCHASE</a>
+        <div id="vp" class="content-box hidden">
+            <div class="profile-ui pink-glow">
+                <h3 class="neon-txt" style="font-size: 1.5rem;"><span id="u-display">USER</span><span class="uid-badge">UID: <span id="u-uid">0</span></span></h3>
+                
+                <div class="ui-row">
+                    <div class="ui-item"><span class="ui-label" id="l-s">STATUS</span><span class="ui-val neon-txt">ACTIVE</span></div>
+                    <div class="ui-item"><span class="ui-label" id="l-b">BY</span><span class="ui-val" id="u-by">SYSTEM</span></div>
+                    <div class="ui-item"><span class="ui-label" id="l-d">DATE</span><span class="ui-val" id="u-date">01.01.26</span></div>
+                    <div class="ui-item"><span class="ui-label" id="l-r">RANK</span><span class="ui-val" id="u-rank">USER</span></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <span class="ui-label" id="l-i">YOUR INVITES</span>
+                    <div style="background: #000; padding: 15px; border: 1px solid #111; color: var(--neon-pink); font-size: 0.8rem; margin: 10px 0;" id="u-invs">NONE</div>
+                    <button class="btn" style="background: #111; color: #fff; border: 1px solid #222;" onclick="gen()">GENERATE CODE</button>
                 </div>
             </div>
-        </section>
-
-        <div class="tg-section">
-            <a href="https://t.me/desolationcheat" target="_blank" class="tg-button">
-                JOIN TELEGRAM CHANNEL
-            </a>
         </div>
     </main>
 
-    <!-- Окно Логина -->
-    <div id="authModal" class="modal">
-        <div class="auth-box">
-            <span class="close-btn" onclick="closeLogin()">&times;</span>
-            <h2 class="orbitron">LICENSE LOGIN</h2>
-            <input type="text" placeholder="ENTER YOUR KEY" class="auth-input">
-            <button class="submit-btn" onclick="alert('Checking key...')">AUTHORIZE</button>
-        </div>
-    </div>
-
     <script>
-        function openLogin() { document.getElementById('authModal').style.display = 'flex'; }
-        function closeLogin() { document.getElementById('authModal').style.display = 'none'; }
-        window.onclick = function(event) {
-            let modal = document.getElementById('authModal');
-            if (event.target == modal) modal.style.display = "none";
+        const firebaseConfig = { apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", authDomain: "desolationcheat.firebaseapp.com", databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com", projectId: "desolationcheat" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let user = null, uid = "";
+        const lang = {
+            RU: { f1: "Silent Aimbot, Wallshot и авто-шот с FOV.", f2: "ESP Bones, Lines и розовый mimgui интерфейс.", ls: "СТАТУС", lb: "ОТ КОГО", ld: "ДАТА", lr: "РАНГ", li: "ВАШИ ИНВАЙТЫ" },
+            EN: { f1: "Silent Aimbot, Wallshot and Auto-shot with FOV.", f2: "ESP Bones, Lines and pink mimgui interface.", ls: "STATUS", lb: "BY", ld: "DATE", lr: "RANK", li: "YOUR INVITES" }
+        };
+
+        function setL(l) {
+            document.getElementById('f-ru').classList.toggle('active', l==='RU');
+            document.getElementById('f-en').classList.toggle('active', l==='EN');
+            document.getElementById('f1-t').innerText = lang[l].f1; document.getElementById('f2-t').innerText = lang[l].f2;
+            document.getElementById('l-s').innerText = lang[l].ls; document.getElementById('l-b').innerText = lang[l].lb;
+            document.getElementById('l-d').innerText = lang[l].ld; document.getElementById('l-r').innerText = lang[l].lr;
+            document.getElementById('l-i').innerText = lang[l].li;
+        }
+
+        function swap(r) {
+            document.getElementById('box-l').classList.toggle('hidden', r);
+            document.getElementById('box-r').classList.toggle('hidden', !r);
+        }
+
+        async function login() {
+            const u = document.getElementById('l-u').value.toLowerCase().trim();
+            const p = document.getElementById('l-p').value.trim();
+            const s = await db.ref('users/'+u).get();
+            if(s.exists() && s.val().password === p) {
+                uid = u; user = s.val(); 
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('app').style.display = 'flex';
+                setTimeout(() => document.getElementById('app').style.opacity = '1', 50);
+                load();
+            } else alert("Error");
+        }
+
+        async function register() {
+            const u = document.getElementById('r-u').value.toLowerCase().trim();
+            const p = document.getElementById('r-p').value.trim(), i = document.getElementById('r-i').value.trim();
+            const inv = await db.ref('invites/'+i).get();
+            if(inv.exists() && inv.val().active) {
+                const count = (await db.ref('stats/userCount').get()).val() || 0;
+                await db.ref('users/'+u).set({ password:p, by:inv.val().gen_by||"SYSTEM", date:new Date().toLocaleDateString(), uid: count+1, rank:"USER", invs:[] });
+                await db.ref('invites/'+i).update({ active:false });
+                await db.ref('stats/userCount').set(count+1);
+                alert("Success"); swap(false);
+            }
+        }
+
+        function load() {
+            document.getElementById('u-display').innerText = uid.toUpperCase();
+            document.getElementById('u-uid').innerText = user.uid || "0";
+            document.getElementById('u-by').innerText = user.by || "SYSTEM";
+            document.getElementById('u-date').innerText = user.date || "05.05.2026";
+            document.getElementById('u-rank').innerText = (uid==='ryodeu'||uid==='dev') ? "ADMIN" : "USER";
+            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "NO KEYS";
+            setL('RU');
+        }
+
+        async function gen() {
+            const code = "DSL-" + Math.random().toString(36).substring(2,7).toUpperCase();
+            await db.ref('invites/'+code).set({ active:true, gen_by:uid });
+            let my = user.invs || []; my.push(code);
+            await db.ref('users/'+uid).update({ invs:my });
+            user.invs = my; load();
+        }
+
+        function tab(t) {
+            document.getElementById('vh').classList.toggle('hidden', t!=='h');
+            document.getElementById('vp').classList.toggle('hidden', t!=='p');
+            document.getElementById('n-h').classList.toggle('active', t==='h');
+            document.getElementById('n-p').classList.toggle('active', t==='p');
         }
     </script>
 </body>
