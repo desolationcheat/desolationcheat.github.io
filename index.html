@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>DESOLATION // GEN-3</title>
+    <title>DESOLATION // PROJECT</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
@@ -22,7 +22,6 @@
         .neon-txt { color: var(--neon-pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
         .pink-glow { border: 1px solid var(--neon-pink) !important; box-shadow: var(--glow); }
 
-        /* NAV */
         nav {
             position: fixed; top: 0; width: 100%; padding: 20px 40px;
             display: flex; justify-content: space-between; align-items: center;
@@ -33,7 +32,6 @@
         .nav-link { cursor: pointer; color: #555; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .nav-link:hover, .nav-link.active { color: var(--neon-pink); text-shadow: var(--glow); }
 
-        /* AUTH */
         #auth-page { position: fixed; inset: 0; background: var(--dark-bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
         .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 40px; width: 380px; text-align: center; }
         
@@ -49,7 +47,6 @@
         }
         .btn:hover { transform: scale(1.02); box-shadow: var(--glow); }
 
-        /* MAIN */
         main { display: none; padding-top: 120px; flex-direction: column; align-items: center; width: 100%; opacity: 0; transition: 1s; }
         .content-box { width: 90%; max-width: 900px; }
 
@@ -60,7 +57,6 @@
         .f-card { background: var(--panel); border: 1px solid var(--brd); padding: 25px; position: relative; }
         .f-card::after { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--neon-pink); }
 
-        /* PROFILE */
         .profile-ui { background: var(--panel); border: 1px solid var(--brd); padding: 35px; margin-top: 20px; }
         .ui-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
         .ui-item { background: #000; padding: 15px; border: 1px solid #111; }
@@ -78,11 +74,11 @@
 
     <section id="auth-page">
         <div class="auth-card pink-glow">
-            <h2 class="neon-txt" style="margin-bottom: 25px;">Identification</h2>
+            <h2 class="neon-txt" style="margin-bottom: 25px;">DESOLATION AUTH</h2>
             <div id="box-l">
                 <input type="text" id="l-u" placeholder="LOGIN">
                 <input type="password" id="l-p" placeholder="PASSWORD">
-                <button class="btn" onclick="login()">EXECUTE</button>
+                <button class="btn" onclick="login()">LOGIN</button>
                 <p style="font-size: 0.6rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(true)">[ CREATE ACCESS ]</p>
             </div>
             <div id="box-r" class="hidden">
@@ -128,12 +124,16 @@
 
         <div id="vp" class="content-box hidden">
             <div class="profile-ui pink-glow">
-                <h3 class="neon-txt" style="font-size: 1.5rem;"><span id="u-display">USER</span><span class="uid-badge">UID: <span id="u-uid">0</span></span></h3>
+                <h3 class="neon-txt" style="font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    <span id="u-display">USER</span>
+                    <button id="rename-btn" class="hidden" onclick="rename()" style="background:none; border:1px solid #333; color:#555; font-size:0.5rem; padding:2px 5px; cursor:pointer;">RENAME</button>
+                    <span class="uid-badge">UID: <span id="u-uid">0</span></span>
+                </h3>
                 
                 <div class="ui-row">
                     <div class="ui-item"><span class="ui-label" id="l-s">STATUS</span><span class="ui-val neon-txt">ACTIVE</span></div>
                     <div class="ui-item"><span class="ui-label" id="l-b">BY</span><span class="ui-val" id="u-by">SYSTEM</span></div>
-                    <div class="ui-item"><span class="ui-label" id="l-d">DATE</span><span class="ui-val" id="u-date">01.01.26</span></div>
+                    <div class="ui-item"><span class="ui-label" id="l-d">DATE</span><span class="ui-val" id="u-date">05.05.2026</span></div>
                     <div class="ui-item"><span class="ui-label" id="l-r">RANK</span><span class="ui-val" id="u-rank">USER</span></div>
                 </div>
 
@@ -147,7 +147,13 @@
     </main>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", authDomain: "desolationcheat.firebaseapp.com", databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com", projectId: "desolationcheat" };
+        // Конфиг Firebase
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", 
+            authDomain: "desolationcheat.firebaseapp.com", 
+            databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com", 
+            projectId: "desolationcheat" 
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -181,20 +187,31 @@
                 document.getElementById('app').style.display = 'flex';
                 setTimeout(() => document.getElementById('app').style.opacity = '1', 50);
                 load();
-            } else alert("Error");
+            } else alert("INVALID ACCESS");
         }
 
         async function register() {
             const u = document.getElementById('r-u').value.toLowerCase().trim();
             const p = document.getElementById('r-p').value.trim(), i = document.getElementById('r-i').value.trim();
             const inv = await db.ref('invites/'+i).get();
+            
             if(inv.exists() && inv.val().active) {
                 const count = (await db.ref('stats/userCount').get()).val() || 0;
-                await db.ref('users/'+u).set({ password:p, by:inv.val().gen_by||"SYSTEM", date:new Date().toLocaleDateString(), uid: count+1, rank:"USER", invs:[] });
-                await db.ref('invites/'+i).update({ active:false });
-                await db.ref('stats/userCount').set(count+1);
-                alert("Success"); swap(false);
-            }
+                // Иерархия: None - высший ранг
+                const role = (u === 'ryodeu' || u === 'dev') ? "None" : "USER"; 
+                
+                await db.ref('users/'+u).set({ 
+                    password: p, 
+                    by: inv.val().gen_by || "SYSTEM", 
+                    date: new Date().toLocaleDateString(), 
+                    uid: count + 1, 
+                    rank: role, 
+                    invs: [] 
+                });
+                await db.ref('invites/'+i).update({ active: false });
+                await db.ref('stats/userCount').set(count + 1);
+                alert("ACCESS GRANTED"); swap(false);
+            } else alert("INVALID INVITE");
         }
 
         function load() {
@@ -202,16 +219,32 @@
             document.getElementById('u-uid').innerText = user.uid || "0";
             document.getElementById('u-by').innerText = user.by || "SYSTEM";
             document.getElementById('u-date').innerText = user.date || "05.05.2026";
-            document.getElementById('u-rank').innerText = (uid==='ryodeu'||uid==='dev') ? "ADMIN" : "USER";
-            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "NO KEYS";
+            
+            const isAdmin = (uid === 'ryodeu' || uid === 'dev');
+            document.getElementById('u-rank').innerText = isAdmin ? "None" : (user.rank || "USER");
+            document.getElementById('rename-btn').classList.toggle('hidden', !isAdmin);
+            
+            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "EMPTY";
             setL('RU');
+        }
+
+        async function rename() {
+            const newNick = prompt("NEW NICKNAME:").toLowerCase().trim();
+            if (!newNick || newNick === uid) return;
+            const check = await db.ref('users/' + newNick).get();
+            if (check.exists()) return alert("TAKEN");
+            if (confirm(`RENAME ${uid} TO ${newNick}?`)) {
+                await db.ref('users/' + newNick).set(user);
+                await db.ref('users/' + uid).remove();
+                location.reload();
+            }
         }
 
         async function gen() {
             const code = "DSL-" + Math.random().toString(36).substring(2,7).toUpperCase();
-            await db.ref('invites/'+code).set({ active:true, gen_by:uid });
+            await db.ref('invites/'+code).set({ active: true, gen_by: uid });
             let my = user.invs || []; my.push(code);
-            await db.ref('users/'+uid).update({ invs:my });
+            await db.ref('users/'+uid).update({ invs: my });
             user.invs = my; load();
         }
 
