@@ -3,1246 +3,1021 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESOLATION | PROJECT BY RYODEU</title>
-    
+    <title>DESOLATION | CHEAT FOR SAMP</title>
     <!-- 
-        ==========================================================================
-        PROJECT: DESOLATION (CORE VERSION)
-        DEVELOPER: RYODEU (ZHENYA)
-        BUILD: 1000+ LINE EXPANDED EDITION
-        STYLE: PASTEL PINK / DARK NEON / MIMGUI INSPIRED
-        ==========================================================================
+        PROJECT: DESOLATION 
+        VERSION: 2.0.4-GOLD
+        AUTHOR: RYODEU
+        DESCRIPTION: FULL STACK WEB INTERFACE FOR SAMP MODIFICATION
     -->
-
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* 
-           ==========================================================================
-           1. CORE VARIABLES & FONTS
-           ==========================================================================
+           EXTENDED UI FRAMEWORK 
+           BASED ON MIMGUI PASTEL PINK DESIGN SYSTEM
         */
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500;800&family=Inter:wght@300;400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;500&display=swap');
 
         :root {
-            --neon-pink: #ffb6c1; 
+            --neon-pink: #ffb6c1;
             --dark-bg: #030303;
-            --panel-bg: rgba(10, 10, 10, 0.98);
-            --panel-bg-hover: rgba(15, 15, 15, 0.98);
-            --border-color: #1a1a1a;
-            --border-active: #ffb6c1;
-            --text-main: #ffffff;
-            --text-muted: #666666;
-            --text-dark: #222222;
-            --glow: 0 0 20px rgba(255, 182, 193, 0.3);
-            --glow-heavy: 0 0 50px rgba(255, 182, 193, 0.6);
-            --soft-glow: 0 0 10px rgba(255, 182, 193, 0.15);
-            --pink-transparent: rgba(255, 182, 193, 0.05);
-            --pink-transparent-hover: rgba(255, 182, 193, 0.1);
-            --transition-fast: all 0.2s ease;
-            --transition-smooth: all 0.6s cubic-bezier(0.2, 1, 0.2, 1);
-            --font-main: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-display: 'Orbitron', sans-serif;
+            --panel: #0a0a0a;
+            --brd: #151515;
+            --glow: 0 0 20px rgba(255, 182, 193, 0.35);
+            --heavy-glow: 0 0 50px rgba(255, 182, 193, 0.6);
+            --pink-transparent: rgba(255, 182, 193, 0.1);
+            --transition-speed: 0.4s;
         }
 
-        /* 
-           ==========================================================================
-           2. RESET & GLOBAL STYLES
-           ==========================================================================
-        */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            outline: none;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            cursor: crosshair; 
+            font-family: 'Orbitron', sans-serif; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-pink) transparent;
         }
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--text-main);
-            font-family: var(--font-main);
-            overflow: hidden;
+        body { 
+            background: var(--dark-bg); 
+            color: #ffffff; 
+            overflow: hidden; 
             height: 100vh;
-            width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: 
-                linear-gradient(rgba(255, 182, 193, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 182, 193, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: center center;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        ::-webkit-scrollbar { 
-            width: 4px; 
-            height: 4px;
-        }
-        
-        ::-webkit-scrollbar-track { 
-            background: #000000; 
-        }
-        
-        ::-webkit-scrollbar-thumb { 
-            background: var(--neon-pink); 
-            border-radius: 2px; 
-            box-shadow: var(--soft-glow);
-        }
-
-        /* 
-           ==========================================================================
-           3. ANIMATIONS
-           ==========================================================================
-        */
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(5px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-5px); }
-        }
-
-        @keyframes pulseGlow { 
-            0% { box-shadow: var(--soft-glow); text-shadow: var(--soft-glow); } 
-            50% { box-shadow: var(--glow); text-shadow: var(--glow); } 
-            100% { box-shadow: var(--soft-glow); text-shadow: var(--soft-glow); } 
-        }
-
-        @keyframes slideInRight { 
-            from { transform: translateX(50px); opacity: 0; } 
-            to { transform: translateX(0); opacity: 1; } 
-        }
-
-        /* 
-           ==========================================================================
-           4. MENU CONTAINER (MIMGUI STYLE)
-           ==========================================================================
-        */
-        .desolation-menu {
-            width: 950px;
-            height: 650px;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--glow);
-            display: flex;
+        /* INTRO ANIMATION LAYER */
+        #intro-overlay {
+            position: fixed; 
+            inset: 0; 
+            background: #000; 
+            z-index: 10000;
+            display: flex; 
             flex-direction: column;
-            position: relative;
-            animation: fadeIn 0.4s var(--transition-smooth);
-            border-top: 3px solid var(--neon-pink);
-        }
-
-        /* Header */
-        .menu-header {
-            height: 60px;
-            background: rgba(5, 5, 5, 0.9);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
+            justify-content: center; 
             align-items: center;
-            padding: 0 25px;
-            cursor: grab;
+            transition: opacity 1.2s ease-in-out;
         }
 
-        .menu-header:active {
-            cursor: grabbing;
+        .intro-glitch-container {
+            position: relative;
         }
 
-        .menu-title {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
+        .intro-title {
+            font-size: 5rem; 
+            color: var(--neon-pink); 
+            text-shadow: var(--heavy-glow);
+            letter-spacing: 20px; 
             font-weight: 900;
-            color: var(--neon-pink);
-            letter-spacing: 6px;
-            text-shadow: var(--soft-glow);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-title i {
-            font-size: 1rem;
-        }
-
-        .menu-watermark {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-        }
-
-        /* Body Layout */
-        .menu-body {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* Sidebar Tabs */
-        .menu-sidebar {
-            width: 200px;
-            background: rgba(5, 5, 5, 0.5);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 15px 25px;
-            text-align: left;
-            font-family: var(--font-main);
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .tab-btn i {
-            width: 15px;
             text-align: center;
-        }
-
-        .tab-btn::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0;
-            background: var(--neon-pink);
-            transition: var(--transition-fast);
-            opacity: 0.8;
-            box-shadow: var(--glow);
-        }
-
-        .tab-btn:hover {
-            color: var(--text-main);
-            background: var(--pink-transparent);
-        }
-
-        .tab-btn.active {
-            color: var(--neon-pink);
-            background: var(--pink-transparent-hover);
-            text-shadow: var(--soft-glow);
-        }
-
-        .tab-btn.active::before {
-            width: 3px;
-        }
-
-        /* Content Area */
-        .menu-content {
-            flex: 1;
-            padding: 25px;
-            overflow-y: auto;
             position: relative;
+            animation: introPulse 2s infinite ease-in-out;
         }
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
+        .intro-subtitle {
+            font-family: 'JetBrains+Mono', monospace;
+            font-size: 0.8rem;
+            color: #444;
+            letter-spacing: 10px;
+            margin-top: 20px;
+            text-transform: uppercase;
         }
 
-        .tab-content.active {
-            display: block;
+        @keyframes introPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
 
-        /* 
-           ==========================================================================
-           5. UI CONTROLS (CHECKBOXES, SLIDERS, BUTTONS)
-           ==========================================================================
-        */
+        /* AUTHENTICATION MODULE */
+        #auth-page { 
+            position: fixed; 
+            inset: 0; 
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%); 
+            z-index: 5000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
 
-        /* Group Boxes */
-        .group-box {
-            border: 1px solid var(--border-color);
-            padding: 25px 20px 20px;
+        .auth-container {
+            position: relative;
+            width: 600px;
+            padding: 5px;
+            background: linear-gradient(45deg, transparent, var(--brd), transparent);
+        }
+
+        .auth-card { 
+            background: var(--panel); 
+            border: 1px solid var(--brd); 
+            padding: 70px 50px; 
+            width: 100%; 
+            text-align: center; 
+            box-shadow: var(--glow); 
+            position: relative;
+            z-index: 5;
+        }
+        
+        .auth-header { 
+            font-size: 1.6rem; 
+            margin-bottom: 50px; 
+            color: var(--neon-pink); 
+            text-shadow: var(--glow); 
+            letter-spacing: 5px; 
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        
+        .input-group {
             position: relative;
             margin-bottom: 25px;
-            background: rgba(0, 0, 0, 0.2);
         }
 
-        .group-title {
+        .input-group i {
             position: absolute;
-            top: -10px;
-            left: 15px;
-            background: var(--panel-bg);
-            padding: 0 10px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: var(--neon-pink);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Checkbox */
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 8px 10px;
-            border-radius: 4px;
-            transition: var(--transition-fast);
-        }
-
-        .control-row:hover {
-            background: var(--pink-transparent);
-        }
-
-        .control-label {
-            font-size: 0.8rem;
-            color: #ccc;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-container {
-            display: inline-block;
-            position: relative;
-            padding-left: 25px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            user-select: none;
-        }
-
-        .checkbox-container input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 16px;
-            width: 16px;
-            background-color: #000;
-            border: 1px solid #333;
-            transition: var(--transition-fast);
-            border-radius: 2px;
-        }
-
-        .checkbox-container:hover input ~ .checkmark {
-            border-color: var(--neon-pink);
-        }
-
-        .checkbox-container input:checked ~ .checkmark {
-            background-color: var(--neon-pink);
-            border-color: var(--neon-pink);
-            box-shadow: var(--soft-glow);
-        }
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 5px;
-            top: 2px;
-            width: 4px;
-            height: 8px;
-            border: solid #000;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        .checkbox-container input:checked ~ .checkmark:after {
-            display: block;
-        }
-
-        /* Slider */
-        .slider-container {
-            width: 100%;
-            margin-bottom: 20px;
-            padding: 0 10px;
-        }
-
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.75rem;
-            color: #aaa;
-        }
-
-        .slider-value {
-            color: var(--neon-pink);
-            font-family: var(--font-mono);
-            font-weight: 700;
-        }
-
-        .custom-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #1a1a1a;
-            outline: none;
-            border-radius: 2px;
-        }
-
-        .custom-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            background: var(--neon-pink);
-            cursor: pointer;
-            border-radius: 50%;
-            box-shadow: var(--glow);
-            transition: var(--transition-fast);
-        }
-
-        .custom-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
-        }
-
-        /* Select / Dropdown */
-        .custom-select {
-            background: #050505;
-            border: 1px solid #222;
-            color: var(--text-main);
-            padding: 8px 12px;
-            font-family: var(--font-main);
-            font-size: 0.75rem;
-            outline: none;
-            width: 150px;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .custom-select:focus {
-            border-color: var(--neon-pink);
-            box-shadow: var(--soft-glow);
-        }
-
-        /* Buttons */
-        .btn-main {
-            background: rgba(255, 182, 193, 0.1);
-            border: 1px solid var(--neon-pink);
-            color: var(--neon-pink);
-            padding: 10px 20px;
-            font-family: var(--font-main);
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            width: 100%;
-            border-radius: 2px;
-        }
-
-        .btn-main:hover {
-            background: var(--neon-pink);
-            color: #000;
-            box-shadow: var(--glow);
-        }
-
-        .btn-danger {
-            background: rgba(255, 0, 0, 0.05);
-            border: 1px solid #550000;
-            color: #ff4444;
-        }
-        
-        .btn-danger:hover {
-            background: #ff4444;
-            color: #fff;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
-            border-color: #ff4444;
-        }
-
-        /* 
-           ==========================================================================
-           6. ADMINS ONLINE OVERLAY (RIGHT SIDE AS REQUESTED)
-           ==========================================================================
-        */
-        #admins-online-overlay {
-            position: fixed;
-            right: 20px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 260px;
-            background: rgba(5, 5, 5, 0.85);
-            border: 1px solid var(--border-color);
-            border-right: 3px solid var(--neon-pink);
-            padding: 15px;
-            box-shadow: var(--glow);
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            font-family: var(--font-mono);
-            animation: slideInRight 0.5s ease-out;
+            color: #333;
+            font-size: 0.9rem;
         }
 
-        .admin-header {
-            font-size: 0.7rem;
-            color: var(--neon-pink);
-            margin-bottom: 10px;
+        input { 
+            width: 100%; 
+            background: #000; 
+            border: 1px solid #1a1a1a; 
+            padding: 22px 22px 22px 55px; 
+            color: #fff; 
+            font-size: 0.8rem; 
+            letter-spacing: 3px;
+            outline: none;
+            transition: var(--transition-speed);
             text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-align: center;
-            border-bottom: 1px dashed #333;
-            padding-bottom: 10px;
         }
 
-        .admin-list {
-            list-style: none;
-            max-height: 300px;
-            overflow-y: auto;
+        input:focus { 
+            border-color: var(--neon-pink); 
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.15); 
+            background: #050505; 
+        }
+        
+        .main-btn { 
+            width: 100%; 
+            padding: 22px; 
+            background: var(--neon-pink); 
+            color: #000; 
+            border: none; 
+            font-weight: 900; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            letter-spacing: 3px; 
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
         }
 
-        .admin-item {
-            font-size: 0.75rem;
-            color: #ddd;
-            padding: 6px 0;
+        .main-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .main-btn:hover::after {
+            left: 100%;
+            top: 100%;
+        }
+
+        .main-btn:hover { 
+            box-shadow: var(--heavy-glow); 
+            transform: translateY(-3px); 
+        }
+
+        .auth-footer-links {
+            margin-top: 35px;
             display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .admin-item span.id {
-            color: #666;
-            font-size: 0.65rem;
-        }
-
-        /* 
-           ==========================================================================
-           7. PROFILE / SYSTEM INFO SECTION
-           ==========================================================================
-        */
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            justify-content: center;
             gap: 20px;
         }
 
-        .info-card {
-            background: #050505;
-            border: 1px solid #111;
-            padding: 20px;
-            border-radius: 4px;
-        }
-
-        .info-label {
-            font-size: 0.6rem;
-            color: #555;
+        .auth-link {
+            font-size: 0.6rem; 
+            color: #333; 
+            letter-spacing: 2px; 
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
         }
 
-        .info-value {
-            font-size: 1.1rem;
-            color: #fff;
-            font-family: var(--font-mono);
-        }
-
-        .tier-none {
+        .auth-link:hover {
             color: var(--neon-pink);
-            text-shadow: var(--glow);
-            font-weight: 900;
-            animation: pulseGlow 2s infinite;
         }
 
-        /* Weapon Select Layout */
-        .weapon-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 10px;
+        /* MAIN DASHBOARD INTERFACE */
+        nav {
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            padding: 35px 80px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: rgba(0,0,0,0.98); 
+            border-bottom: 1px solid var(--brd); 
+            z-index: 2000;
         }
 
-        .w-tab {
-            background: transparent;
-            border: 1px solid #222;
-            color: #888;
-            padding: 5px 15px;
-            font-size: 0.7rem;
+        .logo { 
+            font-size: 2rem; 
+            color: var(--neon-pink); 
+            text-shadow: var(--heavy-glow); 
+            font-weight: 900; 
+            letter-spacing: 6px; 
             cursor: pointer;
         }
 
-        .w-tab.active {
-            background: rgba(255, 182, 193, 0.1);
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
+        .nav-links { 
+            display: flex; 
+            gap: 50px; 
+            align-items: center; 
         }
 
+        .nav-link { 
+            cursor: pointer; 
+            color: #444; 
+            font-size: 0.8rem; 
+            text-decoration: none; 
+            font-weight: 800; 
+            letter-spacing: 3px;
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--neon-pink);
+            transition: 0.4s;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover, .nav-link.active { 
+            color: var(--neon-pink); 
+            text-shadow: var(--glow); 
+        }
+
+        .lang-switch { 
+            display: flex; 
+            gap: 30px; 
+            margin-left: 30px; 
+            border-left: 1px solid #1a1a1a; 
+            padding-left: 30px; 
+        }
+
+        .flag-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 6px; 
+            cursor: pointer; 
+        }
+
+        .flag-box {
+            width: 32px; 
+            height: 20px; 
+            border: 1px solid #222;
+            filter: grayscale(100%);
+            transition: 0.5s;
+        }
+
+        .flag-container.active .flag-box {
+            filter: grayscale(0%);
+            box-shadow: 0 0 15px var(--neon-pink); 
+            border-color: var(--neon-pink);
+            transform: scale(1.1);
+        }
+
+        .flag-label { font-size: 0.6rem; color: #333; font-weight: 900; }
+        .flag-container.active .flag-label { color: var(--neon-pink); }
+
+        .f-ru { background: #fff; position: relative; }
+        .f-ru::before { content: ""; position: absolute; top: 33.3%; left: 0; width: 100%; height: 33.3%; background: #0039a6; }
+        .f-ru::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 33.3%; background: #d52b1e; }
+
+        .f-en { background: #00247d; position: relative; overflow: hidden; }
+        .f-en::before { content: ""; position: absolute; top: 0; left: 42%; width: 16%; height: 100%; background: #fff; z-index: 1; }
+        .f-en::after { content: ""; position: absolute; top: 40%; left: 0; width: 100%; height: 20%; background: #fff; z-index: 1; }
+        .f-en-red-h { position: absolute; top: 45%; left: 0; width: 100%; height: 10%; background: #cf142b; z-index: 2; }
+        .f-en-red-v { position: absolute; top: 0; left: 46%; width: 8%; height: 100%; background: #cf142b; z-index: 2; }
+
+        /* CONTENT WRAPPER */
+        main { 
+            display: none; 
+            padding: 180px 80px 80px; 
+            flex-direction: column; 
+            align-items: center; 
+            height: 100vh; 
+            overflow-y: auto; 
+            background: radial-gradient(circle at 50% 0%, rgba(255, 182, 193, 0.03) 0%, transparent 70%);
+        }
+
+        .content-box { width: 100%; max-width: 1300px; animation: fadeInUp 0.8s ease; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MANIFESTO / HOME PAGE */
+        .manifesto-card {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 80px;
+            box-shadow: var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .manifesto-card::before {
+            content: 'DESOLATION';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 10rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.01);
+            pointer-events: none;
+        }
+
+        .manifesto-header {
+            font-size: 2rem;
+            color: var(--neon-pink);
+            margin-bottom: 40px;
+            letter-spacing: 5px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .manifesto-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 2.2;
+            text-align: justify;
+            max-width: 900px;
+        }
+
+        /* PRICE CARDS */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .price-card {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 50px 30px;
+            text-align: center;
+            transition: 0.5s;
+            position: relative;
+        }
+
+        .price-card:hover {
+            border-color: var(--neon-pink);
+            transform: translateY(-10px);
+            box-shadow: var(--glow);
+        }
+
+        .price-card i {
+            font-size: 3rem;
+            color: var(--neon-pink);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .price-card .term {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .price-card .cost {
+            font-family: 'JetBrains Mono', monospace;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* PROFILE SECTION */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 50px;
+        }
+
+        .profile-aside {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: var(--glow);
+        }
+
+        .avatar-container {
+            width: 180px;
+            height: 180px;
+            border: 2px solid var(--neon-pink);
+            margin: 0 auto 40px;
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .avatar-edit-trigger {
+            position: absolute;
+            bottom: -15px;
+            right: -15px;
+            background: var(--neon-pink);
+            color: #000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--glow);
+        }
+
+        .user-title {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: var(--heavy-glow);
+            text-transform: uppercase;
+        }
+
+        .uid-tag {
+            background: var(--pink-transparent);
+            color: var(--neon-pink);
+            padding: 8px 20px;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            display: inline-block;
+            border: 1px solid rgba(255,182,193,0.2);
+        }
+
+        .profile-main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .info-tile {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-tile label {
+            display: block;
+            color: #333;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .info-tile .value {
+            font-size: 1.1rem;
+            color: #ddd;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .info-tile.highlight .value {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(255, 182, 193, 0.3);
+        }
+
+        .invites-section {
+            grid-column: span 2;
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 50px;
+            margin-top: 10px;
+        }
+
+        .token-display {
+            background: #000;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px dashed #222;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-pink);
+            font-size: 0.9rem;
+        }
+
+        .token-item {
+            padding: 5px 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 3px;
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        .pink-text { color: var(--neon-pink); }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
+
+        /* NOTIFICATION SYSTEM */
+        #notifier {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--panel);
+            border: 1px solid var(--neon-pink);
+            color: #fff;
+            padding: 20px 40px;
+            margin-top: 15px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            box-shadow: var(--glow);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- OVERLAY: ADMINS ONLINE (RIGHT SIDE) -->
-    <div id="admins-online-overlay">
-        <div class="admin-header">Admins Online [ <span id="adm-count">3</span> ]</div>
-        <ul class="admin-list" id="admin-ul">
-            <!-- Filled by JS -->
-        </ul>
+    <!-- INTRO SEQUENCE -->
+    <div id="intro-overlay">
+        <div class="intro-glitch-container">
+            <h1 class="intro-title">DESOLATION</h1>
+        </div>
+        <div class="intro-subtitle">CHEAT FOR SAMP</div>
     </div>
 
-    <!-- MAIN MENU: DESOLATION -->
-    <div class="desolation-menu" id="main-menu">
-        
-        <!-- HEADER -->
-        <div class="menu-header">
-            <div class="menu-title">
-                <i class="fa-solid fa-skull"></i> DESOLATION
-            </div>
-            <div class="menu-watermark">
-                BUILD: v4.2.0 | USER: <span id="header-user" class="tier-none">ryodeu</span>
-            </div>
-        </div>
-
-        <!-- BODY -->
-        <div class="menu-body">
-            
-            <!-- SIDEBAR -->
-            <div class="menu-sidebar">
-                <button class="tab-btn active" onclick="deso.switchTab('aimbot')"><i class="fa-solid fa-crosshairs"></i> Aimbot</button>
-                <button class="tab-btn" onclick="deso.switchTab('visuals')"><i class="fa-solid fa-eye"></i> Visuals</button>
-                <button class="tab-btn" onclick="deso.switchTab('misc')"><i class="fa-solid fa-layer-group"></i> Misc</button>
-                <button class="tab-btn" onclick="deso.switchTab('profile')"><i class="fa-solid fa-user-secret"></i> Profile</button>
-                <button class="tab-btn" onclick="deso.switchTab('settings')"><i class="fa-solid fa-gear"></i> Config</button>
-            </div>
-
-            <!-- CONTENT -->
-            <div class="menu-content">
+    <!-- AUTHENTICATION VIEW -->
+    <section id="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2 class="auth-header" id="auth-h">DESOLATION | LOGIN</h2>
                 
-                <!-- TAB: AIMBOT -->
-                <div id="tab-aimbot" class="tab-content active">
-                    <div class="weapon-tabs">
-                        <button class="w-tab active">Deagle</button>
-                        <button class="w-tab">M4</button>
-                        <button class="w-tab">AK-47</button>
-                        <button class="w-tab">Sniper</button>
+                <div id="login-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="l-user" placeholder="USERNAME" autocomplete="off">
                     </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Main Settings</div>
-                        
-                        <div class="control-row">
-                            <label class="checkbox-container"> Enable Silent Aim
-                                <input type="checkbox" checked id="aim_enable">
-                                <span class="checkmark"></span>
-                            </label>
-                            <label class="checkbox-container"> Draw FOV
-                                <input type="checkbox" checked id="aim_drawfov">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-
-                        <div class="slider-container">
-                            <div class="slider-header">
-                                <span>Field of View (FOV)</span>
-                                <span class="slider-value" id="val_fov">2.5</span>
-                            </div>
-                            <input type="range" min="0" max="100" value="25" class="custom-slider" oninput="document.getElementById('val_fov').innerText = (this.value/10).toFixed(1)">
-                        </div>
-
-                        <div class="slider-container">
-                            <div class="slider-header">
-                                <span>Smoothness</span>
-                                <span class="slider-value" id="val_smooth">10.0</span>
-                            </div>
-                            <input type="range" min="0" max="50" value="10" class="custom-slider" oninput="document.getElementById('val_smooth').innerText = this.value + '.0'">
-                        </div>
-
-                        <div class="control-row">
-                            <span class="control-label">Target Bone</span>
-                            <select class="custom-select">
-                                <option value="8">Head (8)</option>
-                                <option value="7">Neck (7)</option>
-                                <option value="5" selected>Spine (5)</option>
-                                <option value="4">Pelvis (4)</option>
-                            </select>
-                        </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="l-pass" placeholder="PASSWORD">
                     </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Accuracy & Hitchance</div>
-                        
-                        <div class="slider-container">
-                            <div class="slider-header">
-                                <span>Hitchance %</span>
-                                <span class="slider-value" id="val_hit">85%</span>
-                            </div>
-                            <input type="range" min="0" max="100" value="85" class="custom-slider" oninput="document.getElementById('val_hit').innerText = this.value + '%'">
-                        </div>
-
-                        <label class="checkbox-container" style="margin-bottom: 10px; display: block;"> Ignore Walls
-                            <input type="checkbox" id="aim_walls">
-                            <span class="checkmark"></span>
-                        </label>
+                    <button class="main-btn" onclick="handleLogin()">INITIALIZE PROTOCOL</button>
+                    <div class="auth-footer-links">
+                        <span class="auth-link" onclick="toggleAuth(true)">[ NO IDENTITY? REGISTER ]</span>
                     </div>
                 </div>
 
-                <!-- TAB: VISUALS -->
-                <div id="tab-visuals" class="tab-content">
-                    <div class="group-box">
-                        <div class="group-title">ESP Elements</div>
-                        
-                        <div class="control-row">
-                            <label class="checkbox-container"> Enable Box ESP
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                            <select class="custom-select" style="width: 100px;">
-                                <option>Normal</option>
-                                <option selected>Corners</option>
-                                <option>3D Box</option>
-                            </select>
-                        </div>
-
-                        <div class="control-row">
-                            <label class="checkbox-container"> Show Names
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-
-                        <div class="control-row">
-                            <label class="checkbox-container"> Show Health Bar
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-
-                        <div class="control-row">
-                            <label class="checkbox-container"> Show Armor Bar
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-
-                        <div class="control-row">
-                            <label class="checkbox-container"> Skeleton ESP (Bones)
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
+                <div id="reg-form" class="hidden">
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" id="r-user" placeholder="NEW IDENTITY">
                     </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Chams & Colors</div>
-                        
-                        <div class="control-row">
-                            <label class="checkbox-container"> Enable Player Chams
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="control-row">
-                            <span class="control-label">Visible Color</span>
-                            <div style="width: 30px; height: 15px; background: #ffb6c1; border: 1px solid #fff; cursor: pointer;"></div>
-                        </div>
-                        <div class="control-row">
-                            <span class="control-label">Hidden Color</span>
-                            <div style="width: 30px; height: 15px; background: #444; border: 1px solid #888; cursor: pointer;"></div>
-                        </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-shield"></i>
+                        <input type="password" id="r-pass" placeholder="SECURITY KEY">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-ticket"></i>
+                        <input type="text" id="r-inv" placeholder="INVITATION TOKEN">
+                    </div>
+                    <button class="main-btn" onclick="handleRegister()">CREATE ACCESS</button>
+                    <div class="auth-footer-links">
+                        <span class="auth-link" onclick="toggleAuth(false)">[ ALREADY AUTHORIZED? ]</span>
                     </div>
                 </div>
-
-                <!-- TAB: MISC -->
-                <div id="tab-misc" class="tab-content">
-                    <div class="group-box">
-                        <div class="group-title">Player Modifications</div>
-                        
-                        <div class="control-row">
-                            <label class="checkbox-container"> Infinite Run
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="control-row">
-                            <label class="checkbox-container"> Anti-Stun
-                                <input type="checkbox" checked>
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="control-row">
-                            <label class="checkbox-container"> Fake Lag
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Kill Sound Effect</div>
-                        <div class="control-row">
-                            <label class="checkbox-container"> Enable Hitsound / Killsound
-                                <input type="checkbox" checked id="sound_enabled" onchange="deso.playSound()">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <p style="font-size: 0.6rem; color: #666; margin-top: 5px; font-family: var(--font-mono);">
-                            Path: <span style="color: var(--neon-pink);">resource\klychscript\killsound.mp3</span>
-                        </p>
-                    </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Admin Checker</div>
-                        <div class="control-row">
-                            <label class="checkbox-container"> Show Admins Overlay (Right Side)
-                                <input type="checkbox" checked onchange="document.getElementById('admins-online-overlay').style.display = this.checked ? 'block' : 'none'">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: PROFILE -->
-                <div id="tab-profile" class="tab-content">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <i class="fa-solid fa-user-ninja" style="font-size: 4rem; color: var(--neon-pink); text-shadow: var(--glow); margin-bottom: 15px;"></i>
-                        <h2 style="font-family: var(--font-display); letter-spacing: 5px; margin-bottom: 5px;">ZHENYA (RYODEU)</h2>
-                        <div style="font-size: 0.7rem; color: #666; letter-spacing: 2px;">PROJECT FOUNDER</div>
-                    </div>
-
-                    <div class="profile-grid">
-                        <div class="info-card">
-                            <div class="info-label">Current Tier</div>
-                            <div class="info-value tier-none">NONE</div>
-                        </div>
-                        <div class="info-card">
-                            <div class="info-label">Subscription</div>
-                            <div class="info-value" style="color: #0f0;">LIFETIME DEV</div>
-                        </div>
-                        <div class="info-card">
-                            <div class="info-label">Dev ID</div>
-                            <div class="info-value">7141691067</div>
-                        </div>
-                        <div class="info-card">
-                            <div class="info-label">Build Hash</div>
-                            <div class="info-value">0x8A7F...2B</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 30px;" id="admin-controls">
-                        <div class="group-title" style="position: relative; left: 0; top: 0; background: transparent; padding: 0; margin-bottom: 15px;">None Tier Panel</div>
-                        <button class="btn-main" style="margin-bottom: 10px;" onclick="deso.log('Developer mode activated for 7141691067')">Unlock Dev Functions</button>
-                        <button class="btn-main btn-danger" onclick="deso.log('Injecting bypass...')">Force Anti-Cheat Bypass</button>
-                    </div>
-                </div>
-
-                <!-- TAB: SETTINGS -->
-                <div id="tab-settings" class="tab-content">
-                    <div class="group-box">
-                        <div class="group-title">Configuration Management</div>
-                        
-                        <div class="control-row">
-                            <select class="custom-select" style="width: 100%; margin-bottom: 15px;" id="cfg-select">
-                                <option>Desolation_Legit.json</option>
-                                <option>Desolation_Rage.json</option>
-                                <option selected>Lekha_Test_Preset.json</option>
-                                <option>Default.json</option>
-                            </select>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button class="btn-main" onclick="deso.log('Config loaded successfully')">Load</button>
-                            <button class="btn-main" onclick="deso.log('Config saved')">Save</button>
-                        </div>
-                    </div>
-
-                    <div class="group-box">
-                        <div class="group-title">Theme Palette (mimgui engine)</div>
-                        <div class="control-row">
-                            <span class="control-label">Accent Color</span>
-                            <input type="color" value="#ffb6c1" style="border: none; background: transparent; cursor: pointer;">
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- NOTIFICATION SYSTEM -->
-    <div id="logs" style="position: fixed; bottom: 20px; left: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 5px;"></div>
+    <!-- NAVIGATION BAR -->
+    <nav>
+        <div class="logo" onclick="switchTab('home')">DESOLATION</div>
+        <div class="nav-links">
+            <div class="nav-link active" id="tab-home" onclick="switchTab('home')">
+                <i class="fa-solid fa-house-chimney-crack"></i> <span id="txt-n-home">ГЛАВНАЯ</span>
+            </div>
+            <div class="nav-link" id="tab-profile" onclick="switchTab('profile')">
+                <i class="fa-solid fa-user-ninja"></i> <span id="txt-n-profile">АККАУНТ</span>
+            </div>
+            <a href="https://t.me/desolation_samp" target="_blank" class="nav-link">
+                <i class="fa-brands fa-telegram"></i> <span>COMMUNITY</span>
+            </a>
+            <div class="lang-switch">
+                <div class="flag-container active" id="lang-ru" onclick="changeLanguage('RU')">
+                    <div class="flag-box f-ru"></div>
+                    <span class="flag-label">RU</span>
+                </div>
+                <div class="flag-container" id="lang-en" onclick="changeLanguage('EN')">
+                    <div class="flag-box f-en">
+                        <div class="f-en-red-h"></div>
+                        <div class="f-en-red-v"></div>
+                    </div>
+                    <span class="flag-label">UK</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="main-app">
+        
+        <!-- HOME SECTION -->
+        <div id="view-home" class="content-box">
+            <div class="manifesto-card">
+                <div class="manifesto-header">
+                    <i class="fa-solid fa-terminal"></i>
+                    <h2 id="txt-m-title">SOFTWARE MANIFESTO</h2>
+                </div>
+                <p class="manifesto-text" id="txt-m-desc"></p>
+            </div>
+
+            <div class="grid-container">
+                <div class="price-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div class="term">7 DAYS</div>
+                    <div class="cost">150.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
+                </div>
+                <div class="price-card" style="border-color: var(--neon-pink);">
+                    <div style="position:absolute; top: 15px; right: 15px; font-size: 0.5rem; color: var(--neon-pink); border: 1px solid var(--neon-pink); padding: 3px 8px;">POPULAR</div>
+                    <i class="fa-solid fa-crown"></i>
+                    <div class="term">30 DAYS</div>
+                    <div class="cost">400.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
+                </div>
+                <div class="price-card">
+                    <i class="fa-solid fa-infinity"></i>
+                    <div class="term">LIFETIME</div>
+                    <div class="cost">1200.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE SECTION -->
+        <div id="view-profile" class="content-box hidden">
+            <div class="profile-layout">
+                <div class="profile-aside">
+                    <div class="avatar-container">
+                        <img src="https://i.imgur.com/6VBx3io.png" class="avatar-img" id="display-avatar">
+                        <div class="avatar-edit-trigger" onclick="document.getElementById('file-input').click()">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="file-input" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
+                    <h2 class="user-title" id="display-username">USER</h2>
+                    <div class="uid-tag">SESSION ID: <span id="display-uid">---</span></div>
+                    
+                    <div style="margin-top: 40px; text-align: left;">
+                        <button class="main-btn hidden" id="boss-rename-btn" style="padding: 12px; font-size: 0.6rem; background: transparent; border: 1px solid #222; color: #444;" onclick="adminRename()">RESET IDENTITY</button>
+                        <button class="main-btn" style="margin-top: 15px; padding: 12px; font-size: 0.6rem; background: transparent; border: 1px solid #222; color: #444;" onclick="logout()">TERMINATE SESSION</button>
+                    </div>
+                </div>
+
+                <div class="profile-main-grid">
+                    <div class="info-tile highlight">
+                        <label id="lbl-rank">SECURITY CLEARANCE</label>
+                        <div class="value" id="display-rank">---</div>
+                    </div>
+                    <div class="info-tile">
+                        <label id="lbl-status">LICENSE STATUS</label>
+                        <div class="value" id="display-status">---</div>
+                    </div>
+                    <div class="info-tile">
+                        <label id="lbl-joined">RECORDS CREATED</label>
+                        <div class="value" id="display-joined">---</div>
+                    </div>
+                    <div class="info-tile">
+                        <label id="lbl-hardware">HARDWARE SYNC</label>
+                        <div class="value" style="color: #0f0;">ACTIVE</div>
+                    </div>
+
+                    <div class="invites-section">
+                        <label id="lbl-invites">GENERATED ACCESS TOKENS</label>
+                        <div class="token-display" id="display-tokens">NO TOKENS FOUND</div>
+                        <div style="display: flex; gap: 20px;">
+                            <button class="main-btn" id="gen-token-btn" style="background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); font-size: 0.7rem; padding: 15px;" onclick="generateInvite()">GENERATE NEW TOKEN</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="notifier"></div>
 
     <script>
-        /*
-           ==========================================================================
-           DESOLATION JAVASCRIPT ENGINE & LOGIC (EXTENDED 1000+ LINE STRUCTURE)
-           ==========================================================================
-        */
+        /**
+         * FIREBASE CORE CONFIGURATION
+         * CONNECTION TO DESOLATION DATABASE
+         */
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", 
+            authDomain: "desolationcheat.firebaseapp.com", 
+            databaseURL: "https://desolationcheat-default-rtdb.firebaseio.com", 
+            projectId: "desolationcheat" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        const deso = {
-            version: "4.2.0",
-            user: "ryodeu",
-            rank: "None", // Rarest tier assigned
-            devId: "7141691067",
+        // GLOBAL STATE
+        let currentUser = null;
+        let currentUID = "";
+        let isTypingManifesto = false;
 
-            // ----------------------------------------------------------------------
-            // 1. MASSIVE WEAPON CONFIGURATION DICTIONARY (MOCKING REAL MEMORY LOGIC)
-            // ----------------------------------------------------------------------
-            weaponsConfig: {
-                // Unarmed & Melee
-                WEAPON_UNARMED: { id: 0, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_BRASSKNUCKLE: { id: 1, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_GOLFCLUB: { id: 2, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_NIGHTSTICK: { id: 3, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_KNIFE: { id: 4, enabled: false, fov: 0.0, smooth: 0.0, bone: 8 },
-                WEAPON_BASEBALLBAT: { id: 5, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_SHOVEL: { id: 6, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_POOLCUE: { id: 7, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_KATANA: { id: 8, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_CHAINSAW: { id: 9, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                
-                // Pistols
-                WEAPON_DILDO1: { id: 10, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_DILDO2: { id: 11, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_VIBE1: { id: 12, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_VIBE2: { id: 13, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_FLOWERS: { id: 14, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_CANE: { id: 15, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_GRENADE: { id: 16, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_TEARGAS: { id: 17, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_MOLTOV: { id: 18, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_ROCKET: { id: 19, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_ROCKET_HS: { id: 20, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_FREEFALL_BOMB: { id: 21, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-
-                // Core Firearms (Active Aimbot usage)
-                WEAPON_PISTOL: { 
-                    id: 22, 
-                    enabled: true, 
-                    fov: 2.0, 
-                    smooth: 5.0, 
-                    bone: 5,
-                    recoil: 0.5,
-                    hitchance: 70
-                },
-                WEAPON_PISTOL_SILENCED: { 
-                    id: 23, 
-                    enabled: true, 
-                    fov: 1.5, 
-                    smooth: 6.0, 
-                    bone: 8,
-                    recoil: 0.2,
-                    hitchance: 80
-                },
-                WEAPON_DEAGLE: { 
-                    id: 24, 
-                    enabled: true, 
-                    fov: 2.5, 
-                    smooth: 10.0, 
-                    bone: 5,
-                    recoil: 0.8,
-                    hitchance: 85
-                },
-                WEAPON_SHOTGUN: { 
-                    id: 25, 
-                    enabled: true, 
-                    fov: 3.0, 
-                    smooth: 4.0, 
-                    bone: 3,
-                    recoil: 1.0,
-                    hitchance: 100
-                },
-                WEAPON_SAWNOFF: { 
-                    id: 26, 
-                    enabled: true, 
-                    fov: 4.0, 
-                    smooth: 2.0, 
-                    bone: 3,
-                    recoil: 1.2,
-                    hitchance: 90
-                },
-                WEAPON_SPAS12: { 
-                    id: 27, 
-                    enabled: true, 
-                    fov: 2.5, 
-                    smooth: 5.0, 
-                    bone: 5,
-                    recoil: 0.9,
-                    hitchance: 95
-                },
-                WEAPON_UZI: { 
-                    id: 28, 
-                    enabled: true, 
-                    fov: 1.5, 
-                    smooth: 8.0, 
-                    bone: 5,
-                    recoil: 0.4,
-                    hitchance: 60
-                },
-                WEAPON_MP5: { 
-                    id: 29, 
-                    enabled: true, 
-                    fov: 1.8, 
-                    smooth: 7.0, 
-                    bone: 8,
-                    recoil: 0.3,
-                    hitchance: 75
-                },
-                WEAPON_AK47: { 
-                    id: 30, 
-                    enabled: true, 
-                    fov: 1.5, 
-                    smooth: 14.0, 
-                    bone: 5,
-                    recoil: 0.85,
-                    hitchance: 85
-                },
-                WEAPON_M4: { 
-                    id: 31, 
-                    enabled: true, 
-                    fov: 1.5, 
-                    smooth: 15.0, 
-                    bone: 5,
-                    recoil: 0.8,
-                    hitchance: 88
-                },
-                WEAPON_TEC9: { 
-                    id: 32, 
-                    enabled: true, 
-                    fov: 2.0, 
-                    smooth: 6.0, 
-                    bone: 5,
-                    recoil: 0.5,
-                    hitchance: 65
-                },
-                WEAPON_RIFLE: { 
-                    id: 33, 
-                    enabled: true, 
-                    fov: 3.5, 
-                    smooth: 3.0, 
-                    bone: 8,
-                    recoil: 0.0,
-                    hitchance: 100
-                },
-                WEAPON_SNIPER: { 
-                    id: 34, 
-                    enabled: true, 
-                    fov: 5.0, 
-                    smooth: 2.0, 
-                    bone: 8,
-                    recoil: 0.0,
-                    hitchance: 100
-                },
-                
-                // Heavy & Special
-                WEAPON_ROCKETLAUNCHER: { id: 35, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_HEATSEEKER: { id: 36, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_FLAMETHROWER: { id: 37, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_MINIGUN: { id: 38, enabled: true, fov: 1.0, smooth: 20.0, bone: 5 },
-                WEAPON_SATCHEL: { id: 39, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_BOMB: { id: 40, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_SPRAYCAN: { id: 41, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_FIREEXTINGUISHER: { id: 42, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_CAMERA: { id: 43, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_NIGHTVISION: { id: 44, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_INFRARED: { id: 45, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 },
-                WEAPON_PARACHUTE: { id: 46, enabled: false, fov: 0.0, smooth: 0.0, bone: 5 }
+        const localization = {
+            RU: {
+                authL: "DESOLATION | ВХОД",
+                authR: "DESOLATION | РЕГИСТРАЦИЯ",
+                navHome: "ГЛАВНАЯ",
+                navProfile: "ПРОФИЛЬ",
+                manifesto: "МАНИФЕСТ ПРОГРАММЫ",
+                desc: "Desolation — это не просто софт, это инструмент тотального контроля. Разработанный для SAMP, наш проект объединяет в себе передовые технологии: кастомный Silent Aim, отрисованный через векторы для идеальной точности, и Wallshot, игнорирующий коллизии. ESP написан на низкоуровневом mimgui с использованием пастельно-розовой неоновой палитры. Каждая строчка кода оптимизирована под высокую частоту кадров. Твой успех — наш приоритет.",
+                rank: "УРОВЕНЬ ДОСТУПА",
+                status: "СТАТУС ЛИЦЕНЗИИ",
+                joined: "ДАТА РЕГИСТРАЦИИ",
+                hardware: "СИНХРОНИЗАЦИЯ",
+                invites: "ГЕНЕРИРОВАННЫЕ КЛЮЧИ",
+                bossRank: "NONE", // User correction
+                userRank: "ПОЛЬЗОВАТЕЛЬ",
+                activeStatus: "АКТИВНА",
+                unlimited: "БЕССРОЧНО",
+                toastLog: "СЕССИЯ ИНИЦИАЛИЗИРОВАНА",
+                toastErr: "ОШИБКА ДОСТУПА",
+                toastReg: "ЛИЧНОСТЬ СОЗДАНА"
             },
-
-            // ----------------------------------------------------------------------
-            // 2. EXTENDED BONE MATRIX SYSTEM FOR SKELETON ESP & AIM
-            // ----------------------------------------------------------------------
-            boneMatrix: {
-                BONE_PELVIS: 1,
-                BONE_SPINE1: 2,
-                BONE_SPINE2: 3,
-                BONE_SPINE3: 4,
-                BONE_NECK: 5,
-                BONE_HEAD: 6,
-                BONE_L_CLAVICLE: 21,
-                BONE_L_UPPERARM: 22,
-                BONE_L_FOREARM: 23,
-                BONE_L_HAND: 24,
-                BONE_R_CLAVICLE: 31,
-                BONE_R_UPPERARM: 32,
-                BONE_R_FOREARM: 33,
-                BONE_R_HAND: 34,
-                BONE_L_THIGH: 41,
-                BONE_L_CALF: 42,
-                BONE_L_FOOT: 43,
-                BONE_R_THIGH: 51,
-                BONE_R_CALF: 52,
-                BONE_R_FOOT: 53
-            },
-
-            // ----------------------------------------------------------------------
-            // 3. COLOR DEFINITIONS (MIMGUI REPLICA)
-            // ----------------------------------------------------------------------
-            colors: {
-                ImGuiCol_Text: [1.00, 1.00, 1.00, 1.00],
-                ImGuiCol_TextDisabled: [0.50, 0.50, 0.50, 1.00],
-                ImGuiCol_WindowBg: [0.04, 0.04, 0.04, 0.98],
-                ImGuiCol_ChildBg: [0.00, 0.00, 0.00, 0.00],
-                ImGuiCol_PopupBg: [0.08, 0.08, 0.08, 0.94],
-                ImGuiCol_Border: [0.10, 0.10, 0.10, 0.50],
-                ImGuiCol_BorderShadow: [0.00, 0.00, 0.00, 0.00],
-                ImGuiCol_FrameBg: [0.16, 0.16, 0.16, 0.54],
-                ImGuiCol_FrameBgHovered: [0.26, 0.26, 0.26, 0.40],
-                ImGuiCol_FrameBgActive: [0.36, 0.36, 0.36, 0.67],
-                ImGuiCol_TitleBg: [0.04, 0.04, 0.04, 1.00],
-                ImGuiCol_TitleBgActive: [0.16, 0.16, 0.16, 1.00],
-                ImGuiCol_TitleBgCollapsed: [0.00, 0.00, 0.00, 0.51],
-                ImGuiCol_MenuBarBg: [0.14, 0.14, 0.14, 1.00],
-                ImGuiCol_ScrollbarBg: [0.02, 0.02, 0.02, 0.53],
-                ImGuiCol_ScrollbarGrab: [0.31, 0.31, 0.31, 1.00],
-                ImGuiCol_ScrollbarGrabHovered: [0.41, 0.41, 0.41, 1.00],
-                ImGuiCol_ScrollbarGrabActive: [0.51, 0.51, 0.51, 1.00],
-                ImGuiCol_CheckMark: [1.00, 0.71, 0.76, 1.00], // Pastel Pink
-                ImGuiCol_SliderGrab: [1.00, 0.71, 0.76, 1.00], // Pastel Pink
-                ImGuiCol_SliderGrabActive: [1.00, 0.60, 0.68, 1.00],
-                ImGuiCol_Button: [0.20, 0.20, 0.20, 0.40],
-                ImGuiCol_ButtonHovered: [1.00, 0.71, 0.76, 0.20],
-                ImGuiCol_ButtonActive: [1.00, 0.71, 0.76, 0.40],
-                ImGuiCol_Header: [1.00, 0.71, 0.76, 0.31],
-                ImGuiCol_HeaderHovered: [1.00, 0.71, 0.76, 0.80],
-                ImGuiCol_HeaderActive: [1.00, 0.71, 0.76, 1.00],
-                ImGuiCol_Separator: [0.10, 0.10, 0.10, 0.50],
-                ImGuiCol_SeparatorHovered: [0.10, 0.40, 0.75, 0.78],
-                ImGuiCol_SeparatorActive: [0.10, 0.40, 0.75, 1.00],
-                ImGuiCol_ResizeGrip: [0.26, 0.59, 0.98, 0.25],
-                ImGuiCol_ResizeGripHovered: [0.26, 0.59, 0.98, 0.67],
-                ImGuiCol_ResizeGripActive: [0.26, 0.59, 0.98, 0.95]
-            },
-
-            // ----------------------------------------------------------------------
-            // 4. CORE UI FUNCTIONS
-            // ----------------------------------------------------------------------
-            init() {
-                this.log(`Desolation Core ${this.version} injected successfully.`);
-                this.log(`Welcome back, ${this.user}. Access Level: ${this.rank}`);
-                this.populateAdmins();
-                
-                // Bind specific dev features if rank is 'None'
-                if (this.rank === "None") {
-                    document.getElementById('admin-controls').style.display = 'block';
-                    this.log("Administrative bypasses granted.");
-                } else {
-                    document.getElementById('admin-controls').style.display = 'none';
-                }
-            },
-
-            switchTab(tabId) {
-                // Remove active from all tabs
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                
-                // Add active to clicked
-                event.currentTarget.classList.add('active');
-                document.getElementById(`tab-${tabId}`).classList.add('active');
-                
-                // Small sound feedback on tab switch (optional)
-                // this.playSound(); 
-            },
-
-            log(message) {
-                const container = document.getElementById('logs');
-                const logEl = document.createElement('div');
-                logEl.style.background = 'rgba(0,0,0,0.8)';
-                logEl.style.borderLeft = '2px solid var(--neon-pink)';
-                logEl.style.padding = '8px 15px';
-                logEl.style.fontFamily = 'var(--font-mono)';
-                logEl.style.fontSize = '0.7rem';
-                logEl.style.color = '#fff';
-                logEl.innerText = `[DESO] ${message}`;
-                
-                container.appendChild(logEl);
-                
-                setTimeout(() => {
-                    logEl.style.opacity = '0';
-                    logEl.style.transition = 'opacity 0.5s';
-                    setTimeout(() => logEl.remove(), 500);
-                }, 4000);
-            },
-
-            // ----------------------------------------------------------------------
-            // 5. AUDIO SYSTEM (USING USER'S EXACT SPECIFIED PATH)
-            // ----------------------------------------------------------------------
-            playSound() {
-                // Correctly referencing the local path requested in the ledger
-                const audioPath = 'resource\\klychscript\\killsound.mp3';
-                try {
-                    // In a real environment, this plays the local sound.
-                    // For the web interface mock, we simulate it via log.
-                    this.log(`Playing audio track from: ${audioPath}`);
-                    
-                    /* 
-                    let hitSound = new Audio(audioPath);
-                    hitSound.volume = 0.5;
-                    hitSound.play(); 
-                    */
-                } catch (e) {
-                    this.log(`Audio error: missing file at ${audioPath}`);
-                }
-            },
-
-            // ----------------------------------------------------------------------
-            // 6. ADMINS ONLINE MODULE (MOCK DATA FOR THE RIGHT-SIDE OVERLAY)
-            // ----------------------------------------------------------------------
-            populateAdmins() {
-                const dummyAdmins = [
-                    { name: "Donny_Hayes", id: 14, lvl: 5 },
-                    { name: "Diana_Morrison", id: 72, lvl: 3 },
-                    { name: "Alex_Motherwell", id: 104, lvl: 6 }
-                ];
-                
-                const ul = document.getElementById('admin-ul');
-                ul.innerHTML = '';
-                
-                dummyAdmins.forEach(adm => {
-                    ul.innerHTML += `
-                        <li class="admin-item">
-                            <span>${adm.name} <span style="color:var(--neon-pink)">[Lvl ${adm.lvl}]</span></span>
-                            <span class="id">ID: ${adm.id}</span>
-                        </li>
-                    `;
-                });
-                
-                document.getElementById('adm-count').innerText = dummyAdmins.length;
+            EN: {
+                authL: "DESOLATION | LOGIN",
+                authR: "DESOLATION | REGISTER",
+                navHome: "DASHBOARD",
+                navProfile: "PROFILE",
+                manifesto: "SOFTWARE MANIFESTO",
+                desc: "Desolation is more than software; it's a tool of total control. Engineered for SAMP, our project integrates advanced technologies: custom vector-based Silent Aim for clinical precision and Wallshot bypassing collisions. The ESP is built on low-level mimgui using a pastel pink neon palette. Every line of code is optimized for high framerates. Your success is our mission.",
+                rank: "SECURITY CLEARANCE",
+                status: "LICENSE STATUS",
+                joined: "RECORDS CREATED",
+                hardware: "HARDWARE SYNC",
+                invites: "GENERATED ACCESS TOKENS",
+                bossRank: "NONE", // User correction
+                userRank: "AUTHORIZED USER",
+                activeStatus: "VERIFIED",
+                unlimited: "UNLIMITED",
+                toastLog: "SESSION INITIALIZED",
+                toastErr: "ACCESS DENIED",
+                toastReg: "IDENTITY CREATED"
             }
         };
 
-        // Initialize on load
-        window.onload = () => deso.init();
+        // UI HELPERS
+        function notify(msg) {
+            const container = document.getElementById('notifier');
+            const div = document.createElement('div');
+            div.className = 'toast';
+            div.innerText = msg;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
+        }
 
-        /*
-           ==========================================================================
-           END OF DESOLATION CORE
-           THE REST OF THE LINES ARE PURE RESERVED SPACE FOR FUTURE MODULES
-           (E.G. LUA BRIDGE, ASI HOOKS, DIRECTX RENDER OVERLAYS)
-           ==========================================================================
-        */
-       
-       // Memory Write Example (Simulated for visualization)
-       function writeMemory(address, value, type) {
-           // DWORD / BYTE / FLOAT injection logic here
-           // ...
-       }
+        function toggleAuth(isReg) {
+            document.getElementById('login-form').classList.toggle('hidden', isReg);
+            document.getElementById('reg-form').classList.toggle('hidden', !isReg);
+            document.getElementById('auth-h').innerText = isReg ? localization.EN.authR : localization.EN.authL;
+        }
 
-       // Hook Present (DirectX 9)
-       function D3D9Hook() {
-           // Engine rendering logic
-           // ...
-       }
+        function switchTab(tab) {
+            document.getElementById('view-home').classList.toggle('hidden', tab !== 'home');
+            document.getElementById('view-profile').classList.toggle('hidden', tab !== 'profile');
+            document.getElementById('tab-home').classList.toggle('active', tab === 'home');
+            document.getElementById('tab-profile').classList.toggle('active', tab === 'profile');
+        }
+
+        // LANGUAGE LOGIC
+        function changeLanguage(lang) {
+            const data = localization[lang];
+            document.getElementById('lang-ru').classList.toggle('active', lang === 'RU');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'EN');
+            
+            // Apply text
+            document.getElementById('txt-n-home').innerText = data.navHome;
+            document.getElementById('txt-n-profile').innerText = data.navProfile;
+            document.getElementById('txt-m-title').innerText = data.manifesto;
+            document.getElementById('lbl-rank').innerText = data.rank;
+            document.getElementById('lbl-status').innerText = data.status;
+            document.getElementById('lbl-joined').innerText = data.joined;
+            document.getElementById('lbl-hardware').innerText = data.hardware;
+            document.getElementById('lbl-invites').innerText = data.invites;
+
+            // Typing effect for manifesto
+            const desc = document.getElementById('txt-m-desc');
+            if(!isTypingManifesto) {
+                isTypingManifesto = true;
+                desc.innerText = "";
+                let i = 0;
+                function type() {
+                    if(i < data.desc.length) {
+                        desc.innerHTML += data.desc.charAt(i);
+                        i++;
+                        setTimeout(type, 10);
+                    }
+                }
+                type();
+            } else {
+                desc.innerText = data.desc;
+            }
+
+            if(currentUser) {
+                const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+                document.getElementById('display-rank').innerText = isBoss ? data.bossRank : data.userRank;
+                document.getElementById('display-status').innerText = isBoss ? data.unlimited : data.activeStatus;
+            }
+        }
+
+        // AUTHENTICATION CORE
+        async function handleLogin() {
+            const u = document.getElementById('l-user').value.toLowerCase().trim();
+            const p = document.getElementById('l-pass').value.trim();
+            if(!u || !p) return;
+
+            const snap = await db.ref('users/' + u).get();
+            if(snap.exists() && snap.val().password === p) {
+                currentUID = u;
+                currentUser = snap.val();
+                notify(localization.EN.toastLog);
+                document.getElementById('auth-page').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-page').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'flex';
+                    syncProfile();
+                }, 800);
+            } else {
+                notify(localization.EN.toastErr);
+            }
+        }
+
+        async function handleRegister() {
+            const u = document.getElementById('r-user').value.toLowerCase().trim();
+            const p = document.getElementById('r-pass').value.trim();
+            const i = document.getElementById('r-inv').value.trim();
+            if(!u || !p || !i) return;
+
+            const invSnap = await db.ref('invites/' + i).get();
+            if(invSnap.exists() && invSnap.val().active) {
+                const countSnap = await db.ref('stats/userCount').get();
+                const count = countSnap.val() || 0;
+                
+                const newUser = {
+                    password: p,
+                    date: new Date().toLocaleDateString(),
+                    uid: count + 1,
+                    rank: "USER",
+                    invs: [],
+                    avatar: "https://i.imgur.com/6VBx3io.png"
+                };
+
+                await db.ref('users/' + u).set(newUser);
+                await db.ref('invites/' + i).update({ active: false, used_by: u });
+                await db.ref('stats/userCount').set(count + 1);
+                
+                notify(localization.EN.toastReg);
+                toggleAuth(false);
+            } else {
+                notify("INVALID INVITATION TOKEN");
+            }
+        }
+
+        // PROFILE LOGIC
+        function syncProfile() {
+            document.getElementById('display-username').innerText = currentUID;
+            document.getElementById('display-uid').innerText = String(currentUser.uid).padStart(4, '0');
+            document.getElementById('display-joined').innerText = currentUser.date;
+            document.getElementById('display-avatar').src = currentUser.avatar || "https://i.imgur.com/6VBx3io.png";
+            
+            const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+            document.getElementById('boss-rename-btn').classList.toggle('hidden', !isBoss);
+            
+            const tokenBox = document.getElementById('display-tokens');
+            const tokens = currentUser.invs || [];
+            if(tokens.length > 0) {
+                tokenBox.innerHTML = tokens.map(t => `<span class="token-item">${t}</span>`).join('');
+            } else {
+                tokenBox.innerText = "NO ACTIVE TOKENS";
+            }
+
+            changeLanguage('RU');
+        }
+
+        function uploadAvatar(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const b64 = e.target.result;
+                    await db.ref('users/' + currentUID).update({ avatar: b64 });
+                    currentUser.avatar = b64;
+                    document.getElementById('display-avatar').src = b64;
+                    notify("BIOMETRIC DATA UPDATED");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function generateInvite() {
+            const code = "DESO-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+            await db.ref('invites/' + code).set({ active: true, gen_by: currentUID });
+            
+            let list = currentUser.invs || [];
+            list.push(code);
+            await db.ref('users/' + currentUID).update({ invs: list });
+            currentUser.invs = list;
+            syncProfile();
+            notify("TOKEN GENERATED");
+        }
+
+        async function adminRename() {
+            const newName = prompt("ENTER NEW IDENTITY:").toLowerCase().trim();
+            if(newName && newName !== currentUID) {
+                const check = await db.ref('users/' + newName).get();
+                if(!check.exists()) {
+                    await db.ref('users/' + newName).set(currentUser);
+                    await db.ref('users/' + currentUID).remove();
+                    location.reload();
+                }
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        // STARTUP SCRIPT
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro-overlay').style.display = 'none';
+                }, 1200);
+            }, 2500);
+        };
     </script>
 </body>
 </html>
