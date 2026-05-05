@@ -3,20 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESOLATION // AUTHENTICATION SYSTEM</title>
+    <title>DESOLATION | CHEAT FOR SAMP</title>
+    <!-- 
+        PROJECT: DESOLATION 
+        VERSION: 2.0.4-GOLD
+        AUTHOR: RYODEU
+        DESCRIPTION: FULL STACK WEB INTERFACE FOR SAMP MODIFICATION
+    -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+        /* 
+           EXTENDED UI FRAMEWORK 
+           BASED ON MIMGUI PASTEL PINK DESIGN SYSTEM
+        */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;500&display=swap');
 
         :root {
             --neon-pink: #ffb6c1;
-            --dark-bg: #050505;
-            --panel: #0d0d0d;
-            --brd: #1a1a1a;
-            --glow: 0 0 25px rgba(255, 182, 193, 0.4);
-            --heavy-glow: 0 0 45px rgba(255, 182, 193, 0.7);
+            --dark-bg: #030303;
+            --panel: #0a0a0a;
+            --brd: #151515;
+            --glow: 0 0 20px rgba(255, 182, 193, 0.35);
+            --heavy-glow: 0 0 50px rgba(255, 182, 193, 0.6);
+            --pink-transparent: rgba(255, 182, 193, 0.1);
+            --transition-speed: 0.4s;
         }
 
         * { 
@@ -25,147 +39,213 @@
             padding: 0; 
             cursor: crosshair; 
             font-family: 'Orbitron', sans-serif; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-pink) transparent;
         }
 
         body { 
             background: var(--dark-bg); 
-            color: #eee; 
+            color: #ffffff; 
             overflow: hidden; 
             height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        #intro {
+        /* INTRO ANIMATION LAYER */
+        #intro-overlay {
             position: fixed; 
             inset: 0; 
             background: #000; 
-            z-index: 9999;
+            z-index: 10000;
             display: flex; 
+            flex-direction: column;
             justify-content: center; 
             align-items: center;
-            animation: fadeOut 0.8s ease 2.5s forwards;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .intro-glitch-container {
+            position: relative;
         }
 
         .intro-title {
-            font-size: 5.5rem; 
+            font-size: 5rem; 
             color: var(--neon-pink); 
             text-shadow: var(--heavy-glow);
             letter-spacing: 20px; 
-            opacity: 0; 
-            animation: fadeInOut 2.5s ease forwards;
             font-weight: 900;
+            text-align: center;
+            position: relative;
+            animation: introPulse 2s infinite ease-in-out;
         }
 
-        @keyframes fadeInOut { 
-            0% { opacity:0; transform:scale(0.8); } 
-            50% { opacity:1; transform:scale(1); } 
-            100% { opacity:0; transform:scale(1.2); } 
+        .intro-subtitle {
+            font-family: 'JetBrains+Mono', monospace;
+            font-size: 0.8rem;
+            color: #444;
+            letter-spacing: 10px;
+            margin-top: 20px;
+            text-transform: uppercase;
         }
 
-        @keyframes fadeOut { 
-            to { visibility: hidden; opacity: 0; } 
+        @keyframes introPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
 
+        /* AUTHENTICATION MODULE */
         #auth-page { 
             position: fixed; 
             inset: 0; 
-            background: radial-gradient(circle at center, #0f0f0f 0%, #000 100%); 
-            z-index: 2000; 
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%); 
+            z-index: 5000; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
         }
 
+        .auth-container {
+            position: relative;
+            width: 600px;
+            padding: 5px;
+            background: linear-gradient(45deg, transparent, var(--brd), transparent);
+        }
+
         .auth-card { 
             background: var(--panel); 
             border: 1px solid var(--brd); 
-            padding: 70px; 
-            width: 650px; 
+            padding: 70px 50px; 
+            width: 100%; 
             text-align: center; 
             box-shadow: var(--glow); 
             position: relative;
-            animation: card-appear 0.6s ease-out;
-        }
-
-        @keyframes card-appear { 
-            from { opacity: 0; transform: scale(0.9); } 
-            to { opacity: 1; transform: scale(1); } 
+            z-index: 5;
         }
         
         .auth-header { 
-            font-size: 2.8rem; 
+            font-size: 1.6rem; 
             margin-bottom: 50px; 
             color: var(--neon-pink); 
             text-shadow: var(--glow); 
-            letter-spacing: 10px; 
+            letter-spacing: 5px; 
             font-weight: 900;
-            display: block;
-            width: 100%;
+            text-transform: uppercase;
         }
         
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #333;
+            font-size: 0.9rem;
+        }
+
         input { 
             width: 100%; 
             background: #000; 
-            border: 1px solid #222; 
-            padding: 24px; 
+            border: 1px solid #1a1a1a; 
+            padding: 22px 22px 22px 55px; 
             color: #fff; 
-            margin-bottom: 25px; 
-            font-size: 1rem; 
-            letter-spacing: 2px;
+            font-size: 0.8rem; 
+            letter-spacing: 3px;
             outline: none;
+            transition: var(--transition-speed);
+            text-transform: uppercase;
         }
 
         input:focus { 
             border-color: var(--neon-pink); 
-            box-shadow: var(--glow); 
-            background: #080808; 
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.15); 
+            background: #050505; 
         }
         
         .main-btn { 
             width: 100%; 
-            padding: 24px; 
+            padding: 22px; 
             background: var(--neon-pink); 
             color: #000; 
             border: none; 
             font-weight: 900; 
             cursor: pointer; 
-            font-size: 1.2rem; 
-            letter-spacing: 2px; 
+            font-size: 1rem; 
+            letter-spacing: 3px; 
             text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .main-btn:hover::after {
+            left: 100%;
+            top: 100%;
         }
 
         .main-btn:hover { 
             box-shadow: var(--heavy-glow); 
-            letter-spacing: 6px; 
-            transform: translateY(-2px); 
+            transform: translateY(-3px); 
         }
 
+        .auth-footer-links {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .auth-link {
+            font-size: 0.6rem; 
+            color: #333; 
+            letter-spacing: 2px; 
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .auth-link:hover {
+            color: var(--neon-pink);
+        }
+
+        /* MAIN DASHBOARD INTERFACE */
         nav {
             position: fixed; 
             top: 0; 
             width: 100%; 
-            padding: 35px 70px;
+            padding: 35px 80px;
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            background: rgba(0,0,0,0.95); 
+            background: rgba(0,0,0,0.98); 
             border-bottom: 1px solid var(--brd); 
-            z-index: 1000;
+            z-index: 2000;
         }
 
         .logo { 
-            font-size: 2.2rem; 
+            font-size: 2rem; 
             color: var(--neon-pink); 
             text-shadow: var(--heavy-glow); 
             font-weight: 900; 
             letter-spacing: 6px; 
             cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .logo:hover {
-            transform: scale(1.1);
-            text-shadow: 0 0 35px var(--neon-pink);
         }
 
         .nav-links { 
@@ -177,13 +257,29 @@
         .nav-link { 
             cursor: pointer; 
             color: #444; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             text-decoration: none; 
-            font-weight: 700; 
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 800; 
+            letter-spacing: 3px;
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--neon-pink);
+            transition: 0.4s;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
         }
 
         .nav-link:hover, .nav-link.active { 
@@ -195,303 +291,486 @@
             display: flex; 
             gap: 30px; 
             margin-left: 30px; 
-            border-left: 1px solid #222; 
+            border-left: 1px solid #1a1a1a; 
             padding-left: 30px; 
         }
 
-        .flag-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
+        .flag-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 6px; 
+            cursor: pointer; 
         }
 
         .flag-box {
-            width: 30px;
-            height: 20px;
-            position: relative;
-            border: 1px solid #333;
-            transform: scale(0.85);
-            opacity: 0.6;
+            width: 32px; 
+            height: 20px; 
+            border: 1px solid #222;
+            filter: grayscale(100%);
+            transition: 0.5s;
         }
 
-        .flag-container:hover .flag-box,
         .flag-container.active .flag-box {
-            transform: scale(1.2);
-            opacity: 1;
-            box-shadow: 0 0 15px var(--neon-pink);
+            filter: grayscale(0%);
+            box-shadow: 0 0 15px var(--neon-pink); 
             border-color: var(--neon-pink);
+            transform: scale(1.1);
         }
 
-        .flag-label {
-            font-size: 0.6rem;
-            color: #444;
-            font-weight: 900;
-        }
+        .flag-label { font-size: 0.6rem; color: #333; font-weight: 900; }
+        .flag-container.active .flag-label { color: var(--neon-pink); }
 
-        .flag-container.active .flag-label {
-            color: var(--neon-pink);
-            text-shadow: var(--glow);
-        }
-
-        .f-ru { background: #fff; }
+        .f-ru { background: #fff; position: relative; }
         .f-ru::before { content: ""; position: absolute; top: 33.3%; left: 0; width: 100%; height: 33.3%; background: #0039a6; }
         .f-ru::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 33.3%; background: #d52b1e; }
 
         .f-en { background: #00247d; position: relative; overflow: hidden; }
-        .f-en::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: #fff; transform: translateY(-50%); }
-        .f-en::after { content: ""; position: absolute; left: 50%; top: 0; width: 4px; height: 100%; background: #fff; transform: translateX(-50%); }
+        .f-en::before { content: ""; position: absolute; top: 0; left: 42%; width: 16%; height: 100%; background: #fff; z-index: 1; }
+        .f-en::after { content: ""; position: absolute; top: 40%; left: 0; width: 100%; height: 20%; background: #fff; z-index: 1; }
+        .f-en-red-h { position: absolute; top: 45%; left: 0; width: 100%; height: 10%; background: #cf142b; z-index: 2; }
+        .f-en-red-v { position: absolute; top: 0; left: 46%; width: 8%; height: 100%; background: #cf142b; z-index: 2; }
 
+        /* CONTENT WRAPPER */
         main { 
             display: none; 
-            padding: 180px 70px 70px; 
+            padding: 180px 80px 80px; 
             flex-direction: column; 
             align-items: center; 
             height: 100vh; 
             overflow-y: auto; 
+            background: radial-gradient(circle at 50% 0%, rgba(255, 182, 193, 0.03) 0%, transparent 70%);
         }
 
-        .content-box { 
-            width: 100%; 
-            max-width: 1300px; 
-            animation: box-fade 1s ease; 
+        .content-box { width: 100%; max-width: 1300px; animation: fadeInUp 0.8s ease; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes box-fade { 
-            from { opacity: 0; filter: blur(10px); } 
-            to { opacity: 1; filter: blur(0); } 
-        }
-
-        .profile-container { 
-            display: grid; 
-            grid-template-columns: 400px 1fr; 
-            gap: 40px; 
-            width: 100%; 
-        }
-
-        .profile-main { 
-            background: var(--panel); 
-            border: 1px solid var(--brd); 
-            padding: 50px; 
-            box-shadow: var(--glow); 
-            text-align: center;
-        }
-
-        .avatar-wrapper {
-            width: 160px;
-            height: 160px;
-            border: 2px solid var(--neon-pink);
-            border-radius: 50%;
-            margin: 0 auto 30px;
+        /* MANIFESTO / HOME PAGE */
+        .manifesto-card {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 80px;
+            box-shadow: var(--glow);
             position: relative;
             overflow: hidden;
+        }
+
+        .manifesto-card::before {
+            content: 'DESOLATION';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 10rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.01);
+            pointer-events: none;
+        }
+
+        .manifesto-header {
+            font-size: 2rem;
+            color: var(--neon-pink);
+            margin-bottom: 40px;
+            letter-spacing: 5px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .manifesto-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 2.2;
+            text-align: justify;
+            max-width: 900px;
+        }
+
+        /* PRICE CARDS */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .price-card {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 50px 30px;
+            text-align: center;
+            transition: 0.5s;
+            position: relative;
+        }
+
+        .price-card:hover {
+            border-color: var(--neon-pink);
+            transform: translateY(-10px);
             box-shadow: var(--glow);
-            cursor: pointer;
+        }
+
+        .price-card i {
+            font-size: 3rem;
+            color: var(--neon-pink);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .price-card .term {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .price-card .cost {
+            font-family: 'JetBrains Mono', monospace;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* PROFILE SECTION */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 50px;
+        }
+
+        .profile-aside {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: var(--glow);
+        }
+
+        .avatar-container {
+            width: 180px;
+            height: 180px;
+            border: 2px solid var(--neon-pink);
+            margin: 0 auto 40px;
+            position: relative;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .avatar-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: #000;
         }
 
-        .avatar-overlay {
+        .avatar-edit-trigger {
             position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
+            bottom: -15px;
+            right: -15px;
+            background: var(--neon-pink);
+            color: #000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
+            cursor: pointer;
+            box-shadow: var(--glow);
+        }
+
+        .user-title {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: var(--heavy-glow);
+            text-transform: uppercase;
+        }
+
+        .uid-tag {
+            background: var(--pink-transparent);
             color: var(--neon-pink);
-            font-size: 1.5rem;
+            padding: 8px 20px;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            display: inline-block;
+            border: 1px solid rgba(255,182,193,0.2);
         }
 
-        .avatar-wrapper:hover .avatar-overlay { opacity: 1; }
-
-        .profile-details { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 25px; 
+        .profile-main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
         }
 
-        .stat-card { 
-            background: var(--panel); 
-            border: 1px solid var(--brd); 
-            padding: 35px; 
-            position: relative; 
+        .info-tile {
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 35px;
+            position: relative;
             overflow: hidden;
         }
 
-        .stat-card:hover { 
-            border-color: var(--neon-pink); 
-            box-shadow: var(--glow); 
+        .info-tile label {
+            display: block;
+            color: #333;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 900;
         }
 
-        .stat-card small { 
-            color: #444; 
-            font-size: 0.65rem; 
-            letter-spacing: 3px; 
-            display: block; 
-            margin-bottom: 15px; 
-        }
-
-        .stat-val { 
-            font-size: 1.2rem; 
-            color: #fff; 
-            font-weight: 700; 
-        }
-
-        .uid-box { 
-            margin-top: 30px; 
-            padding: 15px; 
-            background: #000; 
-            border: 1px solid var(--neon-pink);
-            color: var(--neon-pink); 
-            font-weight: 900; 
-            box-shadow: var(--glow); 
+        .info-tile .value {
             font-size: 1.1rem;
+            color: #ddd;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
-        .invites-wrapper {
-            grid-column: span 2; 
-            background: var(--panel); 
-            border: 1px solid var(--brd); 
-            padding: 40px; 
-            margin-top: 20px;
+        .info-tile.highlight .value {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(255, 182, 193, 0.3);
         }
 
-        #u-invs { 
-            background: #000; 
-            padding: 25px; 
-            margin: 20px 0; 
-            color: var(--neon-pink); 
-            border: 1px dashed #333; 
-            min-height: 80px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 15px;
-            align-items: center; 
-            justify-content: center; 
+        .invites-section {
+            grid-column: span 2;
+            background: var(--panel);
+            border: 1px solid var(--brd);
+            padding: 50px;
+            margin-top: 10px;
+        }
+
+        .token-display {
+            background: #000;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px dashed #222;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-pink);
             font-size: 0.9rem;
         }
 
+        .token-item {
+            padding: 5px 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 3px;
+        }
+
+        /* UTILS */
         .hidden { display: none !important; }
+        .pink-text { color: var(--neon-pink); }
         
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
+
+        /* NOTIFICATION SYSTEM */
+        #notifier {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--panel);
+            border: 1px solid var(--neon-pink);
+            color: #fff;
+            padding: 20px 40px;
+            margin-top: 15px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            box-shadow: var(--glow);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="intro"><div class="intro-title">DESOLATION</div></div>
+    <!-- INTRO SEQUENCE -->
+    <div id="intro-overlay">
+        <div class="intro-glitch-container">
+            <h1 class="intro-title">DESOLATION</h1>
+        </div>
+        <div class="intro-subtitle">CHEAT FOR SAMP</div>
+    </div>
 
+    <!-- AUTHENTICATION VIEW -->
     <section id="auth-page">
-        <div class="auth-card">
-            <h1 class="auth-header">AUTHENTICATION</h1>
-            <div id="box-l">
-                <input type="text" id="l-u" placeholder="USERNAME" spellcheck="false">
-                <input type="password" id="l-p" placeholder="PASSWORD">
-                <button class="main-btn" onclick="login()">INITIALIZE SESSION</button>
-                <div style="margin-top: 35px;">
-                    <span style="font-size: 0.7rem; color: #444; letter-spacing: 2px; cursor: pointer;" onclick="swap(true)">[ REGISTER ENTITY ]</span>
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2 class="auth-header" id="auth-h">DESOLATION | LOGIN</h2>
+                
+                <div id="login-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="l-user" placeholder="USERNAME" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="l-pass" placeholder="PASSWORD">
+                    </div>
+                    <button class="main-btn" onclick="handleLogin()">INITIALIZE PROTOCOL</button>
+                    <div class="auth-footer-links">
+                        <span class="auth-link" onclick="toggleAuth(true)">[ NO IDENTITY? REGISTER ]</span>
+                    </div>
                 </div>
-            </div>
-            <div id="box-r" class="hidden">
-                <input type="text" id="r-u" placeholder="NEW IDENTITY" spellcheck="false">
-                <input type="password" id="r-p" placeholder="SECURITY KEY">
-                <input type="text" id="r-i" placeholder="INVITATION TOKEN" spellcheck="false">
-                <button class="main-btn" onclick="register()">CREATE PROTOCOL</button>
-                <div style="margin-top: 35px;">
-                    <span style="font-size: 0.7rem; color: #444; letter-spacing: 2px; cursor: pointer;" onclick="swap(false)">[ RETURN TO LOGIN ]</span>
+
+                <div id="reg-form" class="hidden">
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" id="r-user" placeholder="NEW IDENTITY">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-shield"></i>
+                        <input type="password" id="r-pass" placeholder="SECURITY KEY">
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-ticket"></i>
+                        <input type="text" id="r-inv" placeholder="INVITATION TOKEN">
+                    </div>
+                    <button class="main-btn" onclick="handleRegister()">CREATE ACCESS</button>
+                    <div class="auth-footer-links">
+                        <span class="auth-link" onclick="toggleAuth(false)">[ ALREADY AUTHORIZED? ]</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- NAVIGATION BAR -->
     <nav>
-        <div class="logo" onclick="tab('h')" id="main-logo">DESOLATION</div>
+        <div class="logo" onclick="switchTab('home')">DESOLATION</div>
         <div class="nav-links">
-            <div class="nav-link" onclick="tab('p')" id="n-p"><i class="fa-solid fa-user-gear"></i> <span id="txt-profile">ПРОФИЛЬ</span></div>
-            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank" id="n-tg"><i class="fa-brands fa-telegram"></i> <span id="txt-tg">TELEGRAM</span></a>
+            <div class="nav-link active" id="tab-home" onclick="switchTab('home')">
+                <i class="fa-solid fa-house-chimney-crack"></i> <span id="txt-n-home">ГЛАВНАЯ</span>
+            </div>
+            <div class="nav-link" id="tab-profile" onclick="switchTab('profile')">
+                <i class="fa-solid fa-user-ninja"></i> <span id="txt-n-profile">АККАУНТ</span>
+            </div>
+            <a href="https://t.me/desolation_samp" target="_blank" class="nav-link">
+                <i class="fa-brands fa-telegram"></i> <span>COMMUNITY</span>
+            </a>
             <div class="lang-switch">
-                <div class="flag-container active" id="c-ru" onclick="setLang('RU')">
+                <div class="flag-container active" id="lang-ru" onclick="changeLanguage('RU')">
                     <div class="flag-box f-ru"></div>
                     <span class="flag-label">RU</span>
                 </div>
-                <div class="flag-container" id="c-en" onclick="setLang('EN')">
-                    <div class="flag-box f-en"></div>
+                <div class="flag-container" id="lang-en" onclick="changeLanguage('EN')">
+                    <div class="flag-box f-en">
+                        <div class="f-en-red-h"></div>
+                        <div class="f-en-red-v"></div>
+                    </div>
                     <span class="flag-label">UK</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main id="app">
-        <div id="vh" class="content-box">
-            <div style="background: var(--panel); border: 1px solid var(--brd); padding: 70px; box-shadow: var(--glow); position: relative;">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--neon-pink); box-shadow: var(--glow);"></div>
-                <h2 style="color: var(--neon-pink); margin-bottom: 40px; text-shadow: var(--glow); font-size: 2rem; letter-spacing: 5px;">SOFTWARE MANIFESTO</h2>
-                <p id="h-desc" style="font-size: 1rem; color: #888; line-height: 2.4; letter-spacing: 1px; text-align: justify;"></p>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px;">
-                <div class="stat-card" style="text-align: center; padding: 50px;">
-                    <i class="fa-solid fa-microchip" style="font-size: 3rem; color: var(--neon-pink); margin-bottom: 25px;"></i>
-                    <div style="font-size: 1.4rem; font-weight: 900;">7 DAY ACCESS</div>
-                    <div style="color: var(--neon-pink); margin-top: 15px; font-size: 1.1rem;">150.00 RUB</div>
+    <!-- MAIN APP CONTAINER -->
+    <main id="main-app">
+        
+        <!-- HOME SECTION -->
+        <div id="view-home" class="content-box">
+            <div class="manifesto-card">
+                <div class="manifesto-header">
+                    <i class="fa-solid fa-terminal"></i>
+                    <h2 id="txt-m-title">SOFTWARE MANIFESTO</h2>
                 </div>
-                <div class="stat-card" style="text-align: center; padding: 50px;">
-                    <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--neon-pink); margin-bottom: 25px;"></i>
-                    <div style="font-size: 1.4rem; font-weight: 900;">30 DAY ACCESS</div>
-                    <div style="color: var(--neon-pink); margin-top: 15px; font-size: 1.1rem;">400.00 RUB</div>
+                <p class="manifesto-text" id="txt-m-desc"></p>
+            </div>
+
+            <div class="grid-container">
+                <div class="price-card">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div class="term">7 DAYS</div>
+                    <div class="cost">150.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
+                </div>
+                <div class="price-card" style="border-color: var(--neon-pink);">
+                    <div style="position:absolute; top: 15px; right: 15px; font-size: 0.5rem; color: var(--neon-pink); border: 1px solid var(--neon-pink); padding: 3px 8px;">POPULAR</div>
+                    <i class="fa-solid fa-crown"></i>
+                    <div class="term">30 DAYS</div>
+                    <div class="cost">400.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
+                </div>
+                <div class="price-card">
+                    <i class="fa-solid fa-infinity"></i>
+                    <div class="term">LIFETIME</div>
+                    <div class="cost">1200.00 RUB</div>
+                    <button class="main-btn" style="margin-top:30px; padding: 15px; font-size: 0.7rem;" onclick="window.open('https://t.me/desolation_samp')">PURCHASE</button>
                 </div>
             </div>
         </div>
 
-        <div id="vp" class="content-box hidden">
-            <div class="profile-container">
-                <div class="profile-main">
-                    <div class="avatar-wrapper" onclick="document.getElementById('av-input').click()">
-                        <img src="https://i.imgur.com/6VBx3io.png" class="avatar-img" id="u-av">
-                        <div class="avatar-overlay"><i class="fa-solid fa-camera-rotate"></i></div>
+        <!-- PROFILE SECTION -->
+        <div id="view-profile" class="content-box hidden">
+            <div class="profile-layout">
+                <div class="profile-aside">
+                    <div class="avatar-container">
+                        <img src="https://i.imgur.com/6VBx3io.png" class="avatar-img" id="display-avatar">
+                        <div class="avatar-edit-trigger" onclick="document.getElementById('file-input').click()">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
                     </div>
-                    <input type="file" id="av-input" class="hidden" accept="image/*" onchange="handleFile(this)">
-                    <h2 id="u-name" style="font-size: 2.2rem; color: #fff; text-shadow: var(--heavy-glow); word-break: break-all;">USER</h2>
-                    <div class="uid-box">UID: <span id="u-uid">---</span></div>
-                    <button id="ren-btn" class="main-btn hidden" style="margin-top: 40px; padding: 15px; font-size: 0.8rem; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);" onclick="rename()">RENAME SESSION</button>
+                    <input type="file" id="file-input" class="hidden" accept="image/*" onchange="uploadAvatar(this)">
+                    <h2 class="user-title" id="display-username">USER</h2>
+                    <div class="uid-tag">SESSION ID: <span id="display-uid">---</span></div>
+                    
+                    <div style="margin-top: 40px; text-align: left;">
+                        <button class="main-btn hidden" id="boss-rename-btn" style="padding: 12px; font-size: 0.6rem; background: transparent; border: 1px solid #222; color: #444;" onclick="adminRename()">RESET IDENTITY</button>
+                        <button class="main-btn" style="margin-top: 15px; padding: 12px; font-size: 0.6rem; background: transparent; border: 1px solid #222; color: #444;" onclick="logout()">TERMINATE SESSION</button>
+                    </div>
                 </div>
 
-                <div class="profile-details">
-                    <div class="stat-card">
-                        <small>ACCESS LEVEL</small>
-                        <div class="stat-val" id="u-rank" style="color: var(--neon-pink);">USER</div>
+                <div class="profile-main-grid">
+                    <div class="info-tile highlight">
+                        <label id="lbl-rank">SECURITY CLEARANCE</label>
+                        <div class="value" id="display-rank">---</div>
                     </div>
-                    <div class="stat-card">
-                        <small>LICENSE EXPIRY</small>
-                        <div class="stat-val" id="u-exp" style="color: #0f0;">30 DAYS</div>
+                    <div class="info-tile">
+                        <label id="lbl-status">LICENSE STATUS</label>
+                        <div class="value" id="display-status">---</div>
                     </div>
-                    <div class="stat-card">
-                        <small>CREATION DATE</small>
-                        <div class="stat-val" id="u-date">-</div>
+                    <div class="info-tile">
+                        <label id="lbl-joined">RECORDS CREATED</label>
+                        <div class="value" id="display-joined">---</div>
                     </div>
-                    <div class="stat-card">
-                        <small>CONNECTION</small>
-                        <div class="stat-val" style="color: #444;">STABLE</div>
+                    <div class="info-tile">
+                        <label id="lbl-hardware">HARDWARE SYNC</label>
+                        <div class="value" style="color: #0f0;">ACTIVE</div>
                     </div>
-                    <div class="invites-wrapper">
-                        <small>GENERATED INVITATION TOKENS</small>
-                        <div id="u-invs">NO ACTIVE TOKENS</div>
-                        <button id="g-btn" class="main-btn" style="background: transparent; border: 1px solid #333; color: #666; font-size: 0.8rem;" onclick="gen()">GENERATE NEW TOKEN</button>
+
+                    <div class="invites-section">
+                        <label id="lbl-invites">GENERATED ACCESS TOKENS</label>
+                        <div class="token-display" id="display-tokens">NO TOKENS FOUND</div>
+                        <div style="display: flex; gap: 20px;">
+                            <button class="main-btn" id="gen-token-btn" style="background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink); font-size: 0.7rem; padding: 15px;" onclick="generateInvite()">GENERATE NEW TOKEN</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <div id="notifier"></div>
+
     <script>
+        /**
+         * FIREBASE CORE CONFIGURATION
+         * CONNECTION TO DESOLATION DATABASE
+         */
         const firebaseConfig = { 
             apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", 
             authDomain: "desolationcheat.firebaseapp.com", 
@@ -501,182 +780,244 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let user = null;
-        let uid = "";
-        let hasTyped = false;
+        // GLOBAL STATE
+        let currentUser = null;
+        let currentUID = "";
+        let isTypingManifesto = false;
 
-        const texts = {
+        const localization = {
             RU: {
-                desc: "Desolation — это ультимативное решение для доминирования. Мы внедрили Silent Aim на векторах, обходящий любые проверки античитов. Wallshot позволяет пробивать объекты без потери урона. ESP движок отрисовывает скелеты и боксы с идеальной синхронизацией. Весь интерфейс построен на mimgui в пастельно-розовой неоновой эстетике.",
-                profile: "ПРОФИЛЬ",
-                tg: "TELEGRAM"
+                authL: "DESOLATION | ВХОД",
+                authR: "DESOLATION | РЕГИСТРАЦИЯ",
+                navHome: "ГЛАВНАЯ",
+                navProfile: "ПРОФИЛЬ",
+                manifesto: "МАНИФЕСТ ПРОГРАММЫ",
+                desc: "Desolation — это не просто софт, это инструмент тотального контроля. Разработанный для SAMP, наш проект объединяет в себе передовые технологии: кастомный Silent Aim, отрисованный через векторы для идеальной точности, и Wallshot, игнорирующий коллизии. ESP написан на низкоуровневом mimgui с использованием пастельно-розовой неоновой палитры. Каждая строчка кода оптимизирована под высокую частоту кадров. Твой успех — наш приоритет.",
+                rank: "УРОВЕНЬ ДОСТУПА",
+                status: "СТАТУС ЛИЦЕНЗИИ",
+                joined: "ДАТА РЕГИСТРАЦИИ",
+                hardware: "СИНХРОНИЗАЦИЯ",
+                invites: "ГЕНЕРИРОВАННЫЕ КЛЮЧИ",
+                bossRank: "NONE", // User correction
+                userRank: "ПОЛЬЗОВАТЕЛЬ",
+                activeStatus: "АКТИВНА",
+                unlimited: "БЕССРОЧНО",
+                toastLog: "СЕССИЯ ИНИЦИАЛИЗИРОВАНА",
+                toastErr: "ОШИБКА ДОСТУПА",
+                toastReg: "ЛИЧНОСТЬ СОЗДАНА"
             },
             EN: {
-                desc: "Desolation is the ultimate dominance solution. We've implemented vector Silent Aim bypassing all anti-cheat checks. Wallshot allows piercing objects without damage loss. The ESP engine renders bones and boxes with perfect synchronization. The entire UI is built on mimgui in a pastel pink neon aesthetic.",
-                profile: "PROFILE",
-                tg: "TELEGRAM"
+                authL: "DESOLATION | LOGIN",
+                authR: "DESOLATION | REGISTER",
+                navHome: "DASHBOARD",
+                navProfile: "PROFILE",
+                manifesto: "SOFTWARE MANIFESTO",
+                desc: "Desolation is more than software; it's a tool of total control. Engineered for SAMP, our project integrates advanced technologies: custom vector-based Silent Aim for clinical precision and Wallshot bypassing collisions. The ESP is built on low-level mimgui using a pastel pink neon palette. Every line of code is optimized for high framerates. Your success is our mission.",
+                rank: "SECURITY CLEARANCE",
+                status: "LICENSE STATUS",
+                joined: "RECORDS CREATED",
+                hardware: "HARDWARE SYNC",
+                invites: "GENERATED ACCESS TOKENS",
+                bossRank: "NONE", // User correction
+                userRank: "AUTHORIZED USER",
+                activeStatus: "VERIFIED",
+                unlimited: "UNLIMITED",
+                toastLog: "SESSION INITIALIZED",
+                toastErr: "ACCESS DENIED",
+                toastReg: "IDENTITY CREATED"
             }
         };
 
-        function setLang(l) {
-            document.getElementById('c-ru').classList.toggle('active', l==='RU');
-            document.getElementById('c-en').classList.toggle('active', l==='EN');
+        // UI HELPERS
+        function notify(msg) {
+            const container = document.getElementById('notifier');
+            const div = document.createElement('div');
+            div.className = 'toast';
+            div.innerText = msg;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
+        }
+
+        function toggleAuth(isReg) {
+            document.getElementById('login-form').classList.toggle('hidden', isReg);
+            document.getElementById('reg-form').classList.toggle('hidden', !isReg);
+            document.getElementById('auth-h').innerText = isReg ? localization.EN.authR : localization.EN.authL;
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-home').classList.toggle('hidden', tab !== 'home');
+            document.getElementById('view-profile').classList.toggle('hidden', tab !== 'profile');
+            document.getElementById('tab-home').classList.toggle('active', tab === 'home');
+            document.getElementById('tab-profile').classList.toggle('active', tab === 'profile');
+        }
+
+        // LANGUAGE LOGIC
+        function changeLanguage(lang) {
+            const data = localization[lang];
+            document.getElementById('lang-ru').classList.toggle('active', lang === 'RU');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'EN');
             
-            document.getElementById('txt-profile').innerText = texts[l].profile;
-            document.getElementById('txt-tg').innerText = texts[l].tg;
-            
-            const desc = document.getElementById('h-desc');
-            const txt = texts[l].desc;
-            
-            if(!hasTyped) {
+            // Apply text
+            document.getElementById('txt-n-home').innerText = data.navHome;
+            document.getElementById('txt-n-profile').innerText = data.navProfile;
+            document.getElementById('txt-m-title').innerText = data.manifesto;
+            document.getElementById('lbl-rank').innerText = data.rank;
+            document.getElementById('lbl-status').innerText = data.status;
+            document.getElementById('lbl-joined').innerText = data.joined;
+            document.getElementById('lbl-hardware').innerText = data.hardware;
+            document.getElementById('lbl-invites').innerText = data.invites;
+
+            // Typing effect for manifesto
+            const desc = document.getElementById('txt-m-desc');
+            if(!isTypingManifesto) {
+                isTypingManifesto = true;
                 desc.innerText = "";
                 let i = 0;
                 function type() {
-                    if(i < txt.length) {
-                        desc.innerHTML += txt.charAt(i);
-                        i++; setTimeout(type, 5);
+                    if(i < data.desc.length) {
+                        desc.innerHTML += data.desc.charAt(i);
+                        i++;
+                        setTimeout(type, 10);
                     }
                 }
                 type();
-                hasTyped = true;
             } else {
-                desc.innerText = txt;
+                desc.innerText = data.desc;
+            }
+
+            if(currentUser) {
+                const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+                document.getElementById('display-rank').innerText = isBoss ? data.bossRank : data.userRank;
+                document.getElementById('display-status').innerText = isBoss ? data.unlimited : data.activeStatus;
             }
         }
 
-        async function login() {
-            const u = document.getElementById('l-u').value.toLowerCase().trim();
-            const p = document.getElementById('l-p').value.trim();
+        // AUTHENTICATION CORE
+        async function handleLogin() {
+            const u = document.getElementById('l-user').value.toLowerCase().trim();
+            const p = document.getElementById('l-pass').value.trim();
             if(!u || !p) return;
 
             const snap = await db.ref('users/' + u).get();
             if(snap.exists() && snap.val().password === p) {
-                uid = u;
-                user = snap.val();
-                document.getElementById('auth-page').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                load();
+                currentUID = u;
+                currentUser = snap.val();
+                notify(localization.EN.toastLog);
+                document.getElementById('auth-page').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('auth-page').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'flex';
+                    syncProfile();
+                }, 800);
             } else {
-                alert("ACCESS DENIED: INVALID IDENTITY");
+                notify(localization.EN.toastErr);
             }
         }
 
-        async function register() {
-            const u = document.getElementById('r-u').value.toLowerCase().trim();
-            const p = document.getElementById('r-p').value.trim();
-            const i = document.getElementById('r-i').value.trim();
-            
-            if(!u || !p || !i) return alert("REQUIRED FIELDS EMPTY");
+        async function handleRegister() {
+            const u = document.getElementById('r-user').value.toLowerCase().trim();
+            const p = document.getElementById('r-pass').value.trim();
+            const i = document.getElementById('r-inv').value.trim();
+            if(!u || !p || !i) return;
 
-            const inv = await db.ref('invites/' + i).get();
-            if(inv.exists() && inv.val().active) {
+            const invSnap = await db.ref('invites/' + i).get();
+            if(invSnap.exists() && invSnap.val().active) {
                 const countSnap = await db.ref('stats/userCount').get();
                 const count = countSnap.val() || 0;
                 
-                await db.ref('users/' + u).set({
+                const newUser = {
                     password: p,
                     date: new Date().toLocaleDateString(),
                     uid: count + 1,
                     rank: "USER",
-                    gen_count: 0,
-                    last_month: new Date().getMonth(),
-                    invs: []
-                });
-                
+                    invs: [],
+                    avatar: "https://i.imgur.com/6VBx3io.png"
+                };
+
+                await db.ref('users/' + u).set(newUser);
                 await db.ref('invites/' + i).update({ active: false, used_by: u });
                 await db.ref('stats/userCount').set(count + 1);
                 
-                alert("PROTOCOL CREATED");
-                swap(false);
+                notify(localization.EN.toastReg);
+                toggleAuth(false);
             } else {
-                alert("TOKEN EXPIRED OR INVALID");
+                notify("INVALID INVITATION TOKEN");
             }
         }
 
-        function load() {
-            document.getElementById('u-name').innerText = uid.toUpperCase();
-            document.getElementById('u-uid').innerText = String(user.uid).padStart(3, '0');
-            document.getElementById('u-date').innerText = user.date;
+        // PROFILE LOGIC
+        function syncProfile() {
+            document.getElementById('display-username').innerText = currentUID;
+            document.getElementById('display-uid').innerText = String(currentUser.uid).padStart(4, '0');
+            document.getElementById('display-joined').innerText = currentUser.date;
+            document.getElementById('display-avatar').src = currentUser.avatar || "https://i.imgur.com/6VBx3io.png";
             
-            if(user.avatar) {
-                document.getElementById('u-av').src = user.avatar;
+            const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+            document.getElementById('boss-rename-btn').classList.toggle('hidden', !isBoss);
+            
+            const tokenBox = document.getElementById('display-tokens');
+            const tokens = currentUser.invs || [];
+            if(tokens.length > 0) {
+                tokenBox.innerHTML = tokens.map(t => `<span class="token-item">${t}</span>`).join('');
+            } else {
+                tokenBox.innerText = "NO ACTIVE TOKENS";
             }
 
-            const isBoss = (uid === 'ryodeu' || uid === 'dev' || user.rank === 'None');
-            document.getElementById('u-rank').innerText = isBoss ? "NONE" : "AUTHORIZED USER";
-            document.getElementById('u-exp').innerText = isBoss ? "UNLIMITED" : "30 DAYS LEFT";
-            document.getElementById('ren-btn').classList.toggle('hidden', !isBoss);
-            
-            const invList = user.invs || [];
-            document.getElementById('u-invs').innerHTML = invList.length ? invList.map(v => `<span>${v}</span>`).join(' | ') : "NO TOKENS GENERATED";
-            
-            setLang('RU');
+            changeLanguage('RU');
         }
 
-        function handleFile(input) {
+        function uploadAvatar(input) {
             const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const base64 = e.target.result;
-                    await db.ref('users/' + uid).update({ avatar: base64 });
-                    user.avatar = base64;
-                    document.getElementById('u-av').src = base64;
+                reader.onload = async (e) => {
+                    const b64 = e.target.result;
+                    await db.ref('users/' + currentUID).update({ avatar: b64 });
+                    currentUser.avatar = b64;
+                    document.getElementById('display-avatar').src = b64;
+                    notify("BIOMETRIC DATA UPDATED");
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        async function rename() {
-            const n = prompt("ENTER NEW IDENTITY:").toLowerCase().trim();
-            if(n && n !== uid) {
-                const s = await db.ref('users/' + n).get();
-                if(!s.exists()) {
-                    await db.ref('users/' + n).set(user);
-                    await db.ref('users/' + uid).remove();
+        async function generateInvite() {
+            const code = "DESO-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+            await db.ref('invites/' + code).set({ active: true, gen_by: currentUID });
+            
+            let list = currentUser.invs || [];
+            list.push(code);
+            await db.ref('users/' + currentUID).update({ invs: list });
+            currentUser.invs = list;
+            syncProfile();
+            notify("TOKEN GENERATED");
+        }
+
+        async function adminRename() {
+            const newName = prompt("ENTER NEW IDENTITY:").toLowerCase().trim();
+            if(newName && newName !== currentUID) {
+                const check = await db.ref('users/' + newName).get();
+                if(!check.exists()) {
+                    await db.ref('users/' + newName).set(currentUser);
+                    await db.ref('users/' + currentUID).remove();
                     location.reload();
-                } else alert("NAME TAKEN");
+                }
             }
         }
 
-        async function gen() {
-            const isBoss = (uid === 'ryodeu' || uid === 'dev');
-            const now = new Date().getMonth();
-            
-            if(!isBoss && user.gen_count >= 2 && user.last_month === now) {
-                alert("MONTHLY LIMIT REACHED");
-                return;
-            }
-
-            const code = "DSL-" + Math.random().toString(36).substring(2, 9).toUpperCase();
-            await db.ref('invites/' + code).set({ active: true, gen_by: uid });
-            
-            let my = user.invs || [];
-            my.push(code);
-            
-            const up = { invs: my };
-            if(!isBoss) {
-                up.gen_count = (user.last_month === now) ? (user.gen_count + 1) : 1;
-                up.last_month = now;
-            }
-            
-            await db.ref('users/' + uid).update(up);
-            user.invs = my;
-            if(!isBoss) user.gen_count = up.gen_count;
-            
-            load();
+        function logout() {
+            location.reload();
         }
 
-        function swap(r) {
-            document.getElementById('box-l').classList.toggle('hidden', r);
-            document.getElementById('box-r').classList.toggle('hidden', !r);
-        }
-
-        function tab(t) {
-            document.getElementById('vh').classList.toggle('hidden', t !== 'h');
-            document.getElementById('vp').classList.toggle('hidden', t !== 'p');
-            document.getElementById('n-p').classList.toggle('active', t === 'p');
-        }
+        // STARTUP SCRIPT
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro-overlay').style.display = 'none';
+                }, 1200);
+            }, 2500);
+        };
     </script>
 </body>
 </html>
