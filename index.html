@@ -2,145 +2,148 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>DESOLATION // GEN-3</title>
+    <title>DESOLATION // 0000X1</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap');
 
         :root {
-            --neon-pink: #ffb6c1;
-            --dark-bg: #030303;
+            --pink: #ffb6c1; /* Пастельно-розовый стиль */
+            --bg: #030303;
             --panel: #0a0a0a;
             --brd: #1a1a1a;
-            --glow: 0 0 15px rgba(255, 182, 193, 0.4);
+            --glow: 0 0 20px rgba(255, 182, 193, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
-        body { background: var(--dark-bg); color: #eee; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
+        body { background: var(--bg); color: #eee; font-family: 'JetBrains Mono', monospace; overflow-x: hidden; }
+        
+        .neon { color: var(--pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
+        .pink-border { border: 1px solid var(--pink) !important; box-shadow: var(--glow); }
 
-        .neon-txt { color: var(--neon-pink); text-shadow: var(--glow); font-family: 'Orbitron'; text-transform: uppercase; }
-        .pink-glow { border: 1px solid var(--neon-pink) !important; box-shadow: var(--glow); }
-
-        /* NAV */
+        /* HEADER */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 20px 40px;
+            position: fixed; top: 0; width: 100%; padding: 20px 50px;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(3,3,3,0.9); border-bottom: 1px solid var(--brd); z-index: 1000; backdrop-filter: blur(10px);
+            background: rgba(3,3,3,0.95); border-bottom: 1px solid var(--brd); z-index: 1000;
         }
 
-        .nav-items { display: flex; gap: 25px; align-items: center; font-size: 0.8rem; }
-        .nav-link { cursor: pointer; color: #555; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .nav-link:hover, .nav-link.active { color: var(--neon-pink); text-shadow: var(--glow); }
+        .nav-links { display: flex; gap: 30px; align-items: center; font-size: 0.8rem; }
+        .nav-item { cursor: pointer; color: #444; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-item:hover, .nav-item.active { color: var(--pink); text-shadow: var(--glow); }
 
         /* AUTH */
-        #auth-page { position: fixed; inset: 0; background: var(--dark-bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 40px; width: 380px; text-align: center; }
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .auth-card { background: var(--panel); border: 1px solid var(--brd); padding: 45px; width: 400px; text-align: center; position: relative; }
         
         input { 
-            width: 100%; background: #000; border: 1px solid var(--brd); padding: 14px; 
-            color: #fff; margin-bottom: 12px; font-family: inherit; font-size: 0.8rem; transition: 0.3s;
+            width: 100%; background: #000; border: 1px solid var(--brd); padding: 15px; 
+            color: #fff; margin-bottom: 15px; font-family: inherit; font-size: 0.8rem;
         }
-        input:focus { border-color: var(--neon-pink); box-shadow: var(--glow); }
+        input:focus { border-color: var(--pink); box-shadow: var(--glow); outline: none; }
 
-        .btn { 
-            width: 100%; padding: 14px; background: var(--neon-pink); color: #000; 
+        .btn-exe { 
+            width: 100%; padding: 15px; background: var(--pink); color: #000; 
             border: none; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; transition: 0.3s;
         }
-        .btn:hover { transform: scale(1.02); box-shadow: var(--glow); }
+        .btn-exe:hover { transform: translateY(-2px); box-shadow: var(--glow); }
 
-        /* MAIN */
-        main { display: none; padding-top: 120px; flex-direction: column; align-items: center; width: 100%; opacity: 0; transition: 1s; }
-        .content-box { width: 90%; max-width: 900px; }
+        /* APP */
+        main { display: none; padding: 130px 50px 50px; flex-direction: column; align-items: center; opacity: 0; transition: 1s; }
+        .content { width: 100%; max-width: 950px; }
 
-        .header-block { text-align: center; margin-bottom: 60px; }
-        .header-block h1 { font-size: 4rem; letter-spacing: 5px; }
+        .hero { text-align: center; margin-bottom: 70px; }
+        .hero h1 { font-size: 4.5rem; letter-spacing: 10px; }
 
-        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .f-card { background: var(--panel); border: 1px solid var(--brd); padding: 25px; position: relative; }
-        .f-card::after { content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--neon-pink); }
+        .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .feat-card { background: var(--panel); border: 1px solid var(--brd); padding: 30px; border-left: 3px solid var(--pink); }
 
-        /* PROFILE */
-        .profile-ui { background: var(--panel); border: 1px solid var(--brd); padding: 35px; margin-top: 20px; }
-        .ui-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
-        .ui-item { background: #000; padding: 15px; border: 1px solid #111; }
-        .ui-label { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .ui-val { font-size: 0.8rem; color: #fff; }
+        /* PROF */
+        .prof-box { background: var(--panel); border: 1px solid var(--brd); padding: 40px; margin-top: 25px; }
+        .prof-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .uid-tag { background: var(--pink); color: #000; padding: 3px 10px; font-size: 0.7rem; font-weight: 800; border-radius: 2px; }
 
-        .uid-badge { background: var(--neon-pink); color: #000; padding: 2px 8px; font-size: 0.7rem; font-weight: 900; margin-left: 10px; border-radius: 2px; }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-item { background: #000; padding: 20px; border: 1px solid #111; }
+        .stat-lbl { font-size: 0.6rem; color: #444; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .stat-val { font-size: 0.85rem; color: #fff; font-weight: 700; }
 
         .hidden { display: none !important; }
-        .lang-ico { font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; cursor: pointer; }
-        .lang-ico.active { filter: grayscale(0); transform: scale(1.2); }
+        .lang-switch { font-size: 1.2rem; cursor: pointer; filter: grayscale(1); transition: 0.2s; }
+        .lang-switch.active { filter: grayscale(0); transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <section id="auth-page">
-        <div class="auth-card pink-glow">
-            <h2 class="neon-txt" style="margin-bottom: 25px;">Identification</h2>
-            <div id="box-l">
-                <input type="text" id="l-u" placeholder="LOGIN">
+    <section id="auth-screen">
+        <div class="auth-card pink-border">
+            <h2 class="neon" style="margin-bottom: 35px;">Access System</h2>
+            <div id="login-box">
+                <input type="text" id="l-u" placeholder="USERNAME">
                 <input type="password" id="l-p" placeholder="PASSWORD">
-                <button class="btn" onclick="login()">EXECUTE</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(true)">[ CREATE ACCESS ]</p>
+                <button class="btn-exe" onclick="doLogin()">AUTHENTICATE</button>
+                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="toggleA(true)">[ NO ACCESS? REGISTER ]</p>
             </div>
-            <div id="box-r" class="hidden">
-                <input type="text" id="r-u" placeholder="USERNAME">
-                <input type="password" id="r-p" placeholder="PASSWORD">
+            <div id="reg-box" class="hidden">
+                <input type="text" id="r-u" placeholder="NEW USERNAME">
+                <input type="password" id="r-p" placeholder="NEW PASSWORD">
                 <input type="text" id="r-i" placeholder="INVITE CODE">
-                <button class="btn" onclick="register()">REGISTER</button>
-                <p style="font-size: 0.6rem; color: #333; margin-top: 15px; cursor: pointer;" onclick="swap(false)">[ BACK TO LOGIN ]</p>
+                <button class="btn-exe" onclick="doReg()">REGISTER</button>
+                <p style="font-size: 0.6rem; color: #333; margin-top: 20px; cursor: pointer;" onclick="toggleA(false)">[ ALREADY REGISTERED ]</p>
             </div>
         </div>
     </section>
 
     <nav>
-        <div class="neon-txt" style="font-size: 1.3rem; letter-spacing: 2px;">DESOLATION</div>
-        <div class="nav-items">
-            <div class="nav-link active" onclick="tab('h')" id="n-h"><span>🏠</span> HOME</div>
-            <div class="nav-link" onclick="tab('p')" id="n-p"><span>👤</span> PROFILE</div>
-            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank"><span>📢</span> TG</a>
-            <div style="display: flex; gap: 10px; margin-left: 15px;">
-                <span class="lang-ico active" id="f-ru" onclick="setL('RU')">🇷🇺</span>
-                <span class="lang-ico" id="f-en" onclick="setL('EN')">🇺🇸</span>
+        <div class="neon" style="font-size: 1.5rem; letter-spacing: 3px; cursor: pointer;" onclick="go('h')">DESOLATION</div>
+        <div class="nav-links">
+            <div class="nav-item active" onclick="go('h')" id="n-h"><span>📂</span> HOME</div>
+            <div class="nav-item" onclick="go('p')" id="n-p"><span>👤</span> PROFILE</div>
+            <a href="https://t.me/desolation_samp" class="nav-item" target="_blank"><span>💬</span> TELEGRAM</a>
+            <div style="display: flex; gap: 12px; margin-left: 20px;">
+                <span class="lang-switch active" id="f-ru" onclick="setL('RU')">🇷🇺</span>
+                <span class="lang-switch" id="f-en" onclick="setL('EN')">🇺🇸</span>
             </div>
         </div>
     </nav>
 
-    <main id="app">
-        <div id="vh" class="content-box">
-            <div class="header-block">
-                <h1 class="neon-txt">DESOLATION</h1>
-                <p style="color: #444; letter-spacing: 8px; font-size: 0.6rem;">INTERNAL_PROJECT // SAMP</p>
+    <main id="main-app">
+        <div id="page-h" class="content">
+            <div class="hero">
+                <h1 class="neon">DESOLATION</h1>
+                <p style="color: #333; letter-spacing: 12px; font-size: 0.65rem; margin-top: 10px;">PREMIUM INTERNAL SOFTWARE // SAMP</p>
             </div>
-            <div class="feature-grid">
-                <div class="f-card">
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Combat.lua</h4>
-                    <p style="font-size: 0.7rem; color: #666; margin-top: 8px;" id="f1-t">Silent Aimbot, Wallshot и авто-шот с кастомным FOV.</p>
+            <div class="feat-grid">
+                <div class="feat-card">
+                    <h4 class="neon" style="font-size: 0.9rem;">Combat.asi</h4>
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;" id="t-f1">Silent Aimbot, Wallshot и авто-шот с кастомным FOV.</p>
                 </div>
-                <div class="f-card">
-                    <h4 class="neon-txt" style="font-size: 0.8rem;">Visuals.mimgui</h4>
-                    <p style="font-size: 0.7rem; color: #666; margin-top: 8px;" id="f2-t">ESP Bones, Lines и розовый интерфейс в стиле mimgui.</p>
+                <div class="feat-card">
+                    <h4 class="neon" style="font-size: 0.9rem;">Visuals.lua</h4>
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;" id="t-f2">ESP Bones, Lines и розовый интерфейс mimgui.</p>
                 </div>
             </div>
         </div>
 
-        <div id="vp" class="content-box hidden">
-            <div class="profile-ui pink-glow">
-                <h3 class="neon-txt" style="font-size: 1.5rem;"><span id="u-display">USER</span><span class="uid-badge">UID: <span id="u-uid">0</span></span></h3>
+        <div id="page-p" class="content hidden">
+            <div class="prof-box pink-border">
+                <div class="prof-top">
+                    <h3 class="neon" style="font-size: 1.8rem;"><span id="disp-u">USER</span> <span class="uid-badge">UID: <span id="disp-uid">0</span></span></h3>
+                    <div id="adm-tag" class="hidden" style="color:var(--pink); font-size:0.7rem; border:1px solid var(--pink); padding:4px 10px;">AUTHORITY</div>
+                </div>
                 
-                <div class="ui-row">
-                    <div class="ui-item"><span class="ui-label" id="l-s">STATUS</span><span class="ui-val neon-txt">ACTIVE</span></div>
-                    <div class="ui-item"><span class="ui-label" id="l-b">BY</span><span class="ui-val" id="u-by">SYSTEM</span></div>
-                    <div class="ui-item"><span class="ui-label" id="l-d">DATE</span><span class="ui-val" id="u-date">01.01.26</span></div>
-                    <div class="ui-item"><span class="ui-label" id="l-r">RANK</span><span class="ui-val" id="u-rank">USER</span></div>
+                <div class="stats-row">
+                    <div class="stat-item"><span class="stat-lbl" id="l-s">STATUS</span><span class="stat-val neon">ACTIVE</span></div>
+                    <div class="stat-item"><span class="stat-lbl" id="l-b">INVITED BY</span><span class="stat-val" id="disp-by">SYSTEM</span></div>
+                    <div class="stat-item"><span class="stat-lbl" id="l-d">JOIN DATE</span><span class="stat-val" id="disp-date">--.--.--</span></div>
+                    <div class="stat-item"><span class="stat-lbl" id="l-r">CARD TIER</span><span class="stat-val neon" style="font-size: 0.7rem;">NONE</span></div>
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <span class="ui-label" id="l-i">YOUR INVITES</span>
-                    <div style="background: #000; padding: 15px; border: 1px solid #111; color: var(--neon-pink); font-size: 0.8rem; margin: 10px 0;" id="u-invs">NONE</div>
-                    <button class="btn" style="background: #111; color: #fff; border: 1px solid #222;" onclick="gen()">GENERATE CODE</button>
+                <div style="margin-top: 25px;">
+                    <span class="stat-lbl" id="l-i">YOUR INVITE CODES</span>
+                    <div style="background: #000; padding: 20px; border: 1px solid #111; color: var(--pink); font-size: 0.8rem; margin: 15px 0; font-family: monospace;" id="disp-invs">---</div>
+                    <button class="btn-exe" style="background: #111; color: #fff; border: 1px solid #222;" onclick="genInv()" id="btn-g">GENERATE INVITE</button>
                 </div>
             </div>
         </div>
@@ -151,73 +154,73 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let user = null, uid = "";
-        const lang = {
-            RU: { f1: "Silent Aimbot, Wallshot и авто-шот с FOV.", f2: "ESP Bones, Lines и розовый mimgui интерфейс.", ls: "СТАТУС", lb: "ОТ КОГО", ld: "ДАТА", lr: "РАНГ", li: "ВАШИ ИНВАЙТЫ" },
-            EN: { f1: "Silent Aimbot, Wallshot and Auto-shot with FOV.", f2: "ESP Bones, Lines and pink mimgui interface.", ls: "STATUS", lb: "BY", ld: "DATE", lr: "RANK", li: "YOUR INVITES" }
+        let uData = null, curU = "";
+        const langData = {
+            RU: { f1: "Silent Aimbot, Wallshot и авто-шот с кастомным FOV.", f2: "ESP Bones, Lines и розовый интерфейс mimgui.", s: "СТАТУС", b: "ПРИГЛАСИЛ", d: "ДАТА", r: "ТИР КАРТЫ", i: "ВАШИ ИНВАЙТЫ", g: "СОЗДАТЬ КОД" },
+            EN: { f1: "Silent Aimbot, Wallshot and Auto-shot with custom FOV.", f2: "ESP Bones, Lines and pink mimgui interface.", s: "STATUS", b: "INVITED BY", d: "JOIN DATE", r: "CARD TIER", i: "YOUR INVITES", g: "GENERATE INVITE" }
         };
 
         function setL(l) {
             document.getElementById('f-ru').classList.toggle('active', l==='RU');
             document.getElementById('f-en').classList.toggle('active', l==='EN');
-            document.getElementById('f1-t').innerText = lang[l].f1; document.getElementById('f2-t').innerText = lang[l].f2;
-            document.getElementById('l-s').innerText = lang[l].ls; document.getElementById('l-b').innerText = lang[l].lb;
-            document.getElementById('l-d').innerText = lang[l].ld; document.getElementById('l-r').innerText = lang[l].lr;
-            document.getElementById('l-i').innerText = lang[l].li;
+            document.getElementById('t-f1').innerText = langData[l].f1; document.getElementById('t-f2').innerText = langData[l].f2;
+            document.getElementById('l-s').innerText = langData[l].s; document.getElementById('l-b').innerText = langData[l].b;
+            document.getElementById('l-d').innerText = langData[l].d; document.getElementById('l-r').innerText = langData[l].r;
+            document.getElementById('l-i').innerText = langData[l].i; document.getElementById('btn-g').innerText = langData[l].g;
         }
 
-        function swap(r) {
-            document.getElementById('box-l').classList.toggle('hidden', r);
-            document.getElementById('box-r').classList.toggle('hidden', !r);
+        function toggleA(r) {
+            document.getElementById('login-box').classList.toggle('hidden', r);
+            document.getElementById('reg-box').classList.toggle('hidden', !r);
         }
 
-        async function login() {
+        async function doLogin() {
             const u = document.getElementById('l-u').value.toLowerCase().trim();
             const p = document.getElementById('l-p').value.trim();
-            const s = await db.ref('users/'+u).get();
-            if(s.exists() && s.val().password === p) {
-                uid = u; user = s.val(); 
-                document.getElementById('auth-page').classList.add('hidden');
-                document.getElementById('app').style.display = 'flex';
-                setTimeout(() => document.getElementById('app').style.opacity = '1', 50);
-                load();
-            } else alert("Error");
+            const snap = await db.ref('users/'+u).get();
+            if(snap.exists() && snap.val().password === p) {
+                curU = u; uData = snap.val();
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').style.display = 'flex';
+                setTimeout(() => document.getElementById('main-app').style.opacity = '1', 100);
+                init();
+            } else alert("INVALID ACCESS DATA");
         }
 
-        async function register() {
+        async function doReg() {
             const u = document.getElementById('r-u').value.toLowerCase().trim();
             const p = document.getElementById('r-p').value.trim(), i = document.getElementById('r-i').value.trim();
             const inv = await db.ref('invites/'+i).get();
             if(inv.exists() && inv.val().active) {
                 const count = (await db.ref('stats/userCount').get()).val() || 0;
-                await db.ref('users/'+u).set({ password:p, by:inv.val().gen_by||"SYSTEM", date:new Date().toLocaleDateString(), uid: count+1, rank:"USER", invs:[] });
+                await db.ref('users/'+u).set({ password:p, by:inv.val().gen_by||"SYSTEM", date:new Date().toLocaleDateString(), uid: count+1, invs:[] });
                 await db.ref('invites/'+i).update({ active:false });
                 await db.ref('stats/userCount').set(count+1);
-                alert("Success"); swap(false);
-            }
+                alert("REGISTRATION COMPLETE"); toggleA(false);
+            } else alert("INVITE CODE INVALID");
         }
 
-        function load() {
-            document.getElementById('u-display').innerText = uid.toUpperCase();
-            document.getElementById('u-uid').innerText = user.uid || "0";
-            document.getElementById('u-by').innerText = user.by || "SYSTEM";
-            document.getElementById('u-date').innerText = user.date || "05.05.2026";
-            document.getElementById('u-rank').innerText = (uid==='ryodeu'||uid==='dev') ? "ADMIN" : "USER";
-            document.getElementById('u-invs').innerText = (user.invs || []).join(' | ') || "NO KEYS";
+        function init() {
+            document.getElementById('disp-u').innerText = curU.toUpperCase();
+            document.getElementById('disp-uid').innerText = uData.uid || "0";
+            document.getElementById('disp-by').innerText = uData.by || "SYSTEM";
+            document.getElementById('disp-date').innerText = uData.date || "05.05.2026";
+            document.getElementById('disp-invs').innerText = (uData.invs || []).join(' | ') || "NO ACTIVE CODES";
+            if(curU==='ryodeu'||curU==='dev') document.getElementById('adm-tag').classList.remove('hidden');
             setL('RU');
         }
 
-        async function gen() {
-            const code = "DSL-" + Math.random().toString(36).substring(2,7).toUpperCase();
-            await db.ref('invites/'+code).set({ active:true, gen_by:uid });
-            let my = user.invs || []; my.push(code);
-            await db.ref('users/'+uid).update({ invs:my });
-            user.invs = my; load();
+        async function genInv() {
+            const code = "DSL-" + Math.random().toString(36).substring(2,8).toUpperCase();
+            await db.ref('invites/'+code).set({ active:true, gen_by:curU });
+            let my = uData.invs || []; my.push(code);
+            await db.ref('users/'+curU).update({ invs:my });
+            uData.invs = my; init();
         }
 
-        function tab(t) {
-            document.getElementById('vh').classList.toggle('hidden', t!=='h');
-            document.getElementById('vp').classList.toggle('hidden', t!=='p');
+        function go(t) {
+            document.getElementById('page-h').classList.toggle('hidden', t!=='h');
+            document.getElementById('page-p').classList.toggle('hidden', t!=='p');
             document.getElementById('n-h').classList.toggle('active', t==='h');
             document.getElementById('n-p').classList.toggle('active', t==='p');
         }
