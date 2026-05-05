@@ -8,10 +8,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ИМПОРТ ШРИФТОВ */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
-        /* ПЕРЕМЕННЫЕ ЦВЕТОВ */
         :root {
             --neon-pink: #ffb6c1;
             --dark-bg: #050505;
@@ -21,7 +19,6 @@
             --heavy-glow: 0 0 45px rgba(255, 182, 193, 0.7);
         }
 
-        /* ГЛОБАЛЬНЫЕ СТИЛИ */
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -38,7 +35,6 @@
             height: 100vh;
         }
 
-        /* ЭФФЕКТЫ ПРИ ЗАГРУЗКЕ */
         #intro {
             position: fixed; 
             inset: 0; 
@@ -70,7 +66,6 @@
             to { visibility: hidden; opacity: 0; } 
         }
 
-        /* СТРАНИЦА АВТОРИЗАЦИИ */
         #auth-page { 
             position: fixed; 
             inset: 0; 
@@ -145,7 +140,6 @@
             transform: translateY(-2px); 
         }
 
-        /* НАВИГАЦИЯ */
         nav {
             position: fixed; 
             top: 0; 
@@ -197,39 +191,58 @@
             text-shadow: var(--glow); 
         }
 
-        /* КАСТОМНЫЕ ФЛАГИ (CSS) */
         .lang-switch { 
             display: flex; 
-            gap: 20px; 
+            gap: 30px; 
             margin-left: 30px; 
             border-left: 1px solid #222; 
             padding-left: 30px; 
+        }
+
+        .flag-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
         }
 
         .flag-box {
             width: 30px;
             height: 20px;
             position: relative;
-            cursor: pointer;
             border: 1px solid #333;
-            filter: grayscale(1);
+            transform: scale(0.85);
+            opacity: 0.6;
         }
 
-        .flag-box.active {
-            filter: grayscale(0);
+        .flag-container:hover .flag-box,
+        .flag-container.active .flag-box {
             transform: scale(1.2);
-            box-shadow: 0 0 10px var(--neon-pink);
+            opacity: 1;
+            box-shadow: 0 0 15px var(--neon-pink);
+            border-color: var(--neon-pink);
+        }
+
+        .flag-label {
+            font-size: 0.6rem;
+            color: #444;
+            font-weight: 900;
+        }
+
+        .flag-container.active .flag-label {
+            color: var(--neon-pink);
+            text-shadow: var(--glow);
         }
 
         .f-ru { background: #fff; }
         .f-ru::before { content: ""; position: absolute; top: 33.3%; left: 0; width: 100%; height: 33.3%; background: #0039a6; }
         .f-ru::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 33.3%; background: #d52b1e; }
 
-        .f-en { background: #00247d; overflow: hidden; }
+        .f-en { background: #00247d; position: relative; overflow: hidden; }
         .f-en::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: #fff; transform: translateY(-50%); }
         .f-en::after { content: ""; position: absolute; left: 50%; top: 0; width: 4px; height: 100%; background: #fff; transform: translateX(-50%); }
 
-        /* ОСНОВНОЙ КОНТЕНТ */
         main { 
             display: none; 
             padding: 180px 70px 70px; 
@@ -250,7 +263,6 @@
             to { opacity: 1; filter: blur(0); } 
         }
 
-        /* ПРОФИЛЬ - ИНТЕРФЕЙС */
         .profile-container { 
             display: grid; 
             grid-template-columns: 400px 1fr; 
@@ -342,7 +354,6 @@
             font-size: 1.1rem;
         }
 
-        /* ТОКЕНЫ ПРИГЛАШЕНИЙ */
         .invites-wrapper {
             grid-column: span 2; 
             background: var(--panel); 
@@ -375,10 +386,8 @@
 </head>
 <body>
 
-    <!-- ИНТРО-ЗАСТАВКА -->
     <div id="intro"><div class="intro-title">DESOLATION</div></div>
 
-    <!-- СТРАНИЦА ЛОГИНА -->
     <section id="auth-page">
         <div class="auth-card">
             <h1 class="auth-header">AUTHENTICATION</h1>
@@ -402,22 +411,25 @@
         </div>
     </section>
 
-    <!-- ШАПКА -->
     <nav>
         <div class="logo" onclick="tab('h')" id="main-logo">DESOLATION</div>
         <div class="nav-links">
-            <div class="nav-link" onclick="tab('p')" id="n-p"><i class="fa-solid fa-user-gear"></i> ПРОФИЛЬ</div>
-            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank"><i class="fa-brands fa-telegram"></i> TELEGRAM</a>
+            <div class="nav-link" onclick="tab('p')" id="n-p"><i class="fa-solid fa-user-gear"></i> <span id="txt-profile">ПРОФИЛЬ</span></div>
+            <a href="https://t.me/desolation_samp" class="nav-link" target="_blank" id="n-tg"><i class="fa-brands fa-telegram"></i> <span id="txt-tg">TELEGRAM</span></a>
             <div class="lang-switch">
-                <div class="flag-box f-ru active" id="f-ru" onclick="setLang('RU')"></div>
-                <div class="flag-box f-en" id="f-en" onclick="setLang('EN')"></div>
+                <div class="flag-container active" id="c-ru" onclick="setLang('RU')">
+                    <div class="flag-box f-ru"></div>
+                    <span class="flag-label">RU</span>
+                </div>
+                <div class="flag-container" id="c-en" onclick="setLang('EN')">
+                    <div class="flag-box f-en"></div>
+                    <span class="flag-label">UK</span>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- КОНТЕНТ ПРИЛОЖЕНИЯ -->
     <main id="app">
-        <!-- ГЛАВНАЯ ПАНЕЛЬ -->
         <div id="vh" class="content-box">
             <div style="background: var(--panel); border: 1px solid var(--brd); padding: 70px; box-shadow: var(--glow); position: relative;">
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--neon-pink); box-shadow: var(--glow);"></div>
@@ -439,14 +451,14 @@
             </div>
         </div>
 
-        <!-- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
         <div id="vp" class="content-box hidden">
             <div class="profile-container">
                 <div class="profile-main">
-                    <div class="avatar-wrapper" onclick="changeAvatar()">
+                    <div class="avatar-wrapper" onclick="document.getElementById('av-input').click()">
                         <img src="https://i.imgur.com/6VBx3io.png" class="avatar-img" id="u-av">
                         <div class="avatar-overlay"><i class="fa-solid fa-camera-rotate"></i></div>
                     </div>
+                    <input type="file" id="av-input" class="hidden" accept="image/*" onchange="handleFile(this)">
                     <h2 id="u-name" style="font-size: 2.2rem; color: #fff; text-shadow: var(--heavy-glow); word-break: break-all;">USER</h2>
                     <div class="uid-box">UID: <span id="u-uid">---</span></div>
                     <button id="ren-btn" class="main-btn hidden" style="margin-top: 40px; padding: 15px; font-size: 0.8rem; background: transparent; border: 1px solid var(--neon-pink); color: var(--neon-pink);" onclick="rename()">RENAME SESSION</button>
@@ -479,7 +491,6 @@
         </div>
     </main>
 
-    <!-- ЛОГИКА (FIREBASE + UI) -->
     <script>
         const firebaseConfig = { 
             apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", 
@@ -495,19 +506,31 @@
         let hasTyped = false;
 
         const texts = {
-            RU: "Desolation — это ультимативное решение для доминирования. Мы внедрили Silent Aim на векторах, обходящий любые проверки античитов. Wallshot позволяет пробивать объекты без потери урона. ESP движок отрисовывает скелеты и боксы с идеальной синхронизацией. Весь интерфейс построен на mimgui в пастельно-розовой неоновой эстетике.",
-            EN: "Desolation is the ultimate dominance solution. We've implemented vector Silent Aim bypassing all anti-cheat checks. Wallshot allows piercing objects without damage loss. The ESP engine renders bones and boxes with perfect synchronization. The entire UI is built on mimgui in a pastel pink neon aesthetic."
+            RU: {
+                desc: "Desolation — это ультимативное решение для доминирования. Мы внедрили Silent Aim на векторах, обходящий любые проверки античитов. Wallshot позволяет пробивать объекты без потери урона. ESP движок отрисовывает скелеты и боксы с идеальной синхронизацией. Весь интерфейс построен на mimgui в пастельно-розовой неоновой эстетике.",
+                profile: "ПРОФИЛЬ",
+                tg: "TELEGRAM"
+            },
+            EN: {
+                desc: "Desolation is the ultimate dominance solution. We've implemented vector Silent Aim bypassing all anti-cheat checks. Wallshot allows piercing objects without damage loss. The ESP engine renders bones and boxes with perfect synchronization. The entire UI is built on mimgui in a pastel pink neon aesthetic.",
+                profile: "PROFILE",
+                tg: "TELEGRAM"
+            }
         };
 
         function setLang(l) {
-            document.getElementById('f-ru').classList.toggle('active', l==='RU');
-            document.getElementById('f-en').classList.toggle('active', l==='EN');
+            document.getElementById('c-ru').classList.toggle('active', l==='RU');
+            document.getElementById('c-en').classList.toggle('active', l==='EN');
+            
+            document.getElementById('txt-profile').innerText = texts[l].profile;
+            document.getElementById('txt-tg').innerText = texts[l].tg;
+            
             const desc = document.getElementById('h-desc');
+            const txt = texts[l].desc;
             
             if(!hasTyped) {
                 desc.innerText = "";
                 let i = 0;
-                const txt = texts[l];
                 function type() {
                     if(i < txt.length) {
                         desc.innerHTML += txt.charAt(i);
@@ -517,7 +540,7 @@
                 type();
                 hasTyped = true;
             } else {
-                desc.innerText = texts[l];
+                desc.innerText = txt;
             }
         }
 
@@ -590,12 +613,17 @@
             setLang('RU');
         }
 
-        async function changeAvatar() {
-            const url = prompt("ENTER IMAGE URL (Imgur/Discord):", user.avatar || "");
-            if (url && url.trim() !== "") {
-                await db.ref('users/' + uid).update({ avatar: url.trim() });
-                user.avatar = url.trim();
-                document.getElementById('u-av').src = url.trim();
+        function handleFile(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64 = e.target.result;
+                    await db.ref('users/' + uid).update({ avatar: base64 });
+                    user.avatar = base64;
+                    document.getElementById('u-av').src = base64;
+                };
+                reader.readAsDataURL(file);
             }
         }
 
