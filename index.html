@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESOLATION | CHEAT FOR SAMP</title>
+    <title>BANKROLL | CHEAT FOR SAMP</title>
     <!-- 
-        PROJECT: DESOLATION 
+        PROJECT: BANKROLL 
         VERSION: 2.0.4-GOLD
         AUTHOR: RYODEU
         DESCRIPTION: FULL STACK WEB INTERFACE FOR SAMP MODIFICATION
@@ -167,6 +167,7 @@
             background: #050505; 
         }
         
+        /* ОБНОВЛЕННЫЕ АНИМАЦИИ КНОПОК */
         .main-btn { 
             width: 100%; 
             padding: 22px; 
@@ -180,6 +181,7 @@
             text-transform: uppercase;
             position: relative;
             overflow: hidden;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1); /* Плавный переход */
         }
 
         .main-btn::after {
@@ -201,7 +203,12 @@
 
         .main-btn:hover { 
             box-shadow: var(--heavy-glow); 
-            transform: translateY(-3px); 
+            transform: translateY(-3px) scale(1.02); /* Легкое увеличение и подъем */
+            filter: brightness(1.1);
+        }
+
+        .main-btn:active {
+            transform: translateY(-1px) scale(0.98); /* Эффект нажатия */
         }
 
         .auth-footer-links {
@@ -265,6 +272,7 @@
             align-items: center; 
             gap: 12px;
             position: relative;
+            transition: color 0.3s ease; /* Плавная смена цвета */
         }
 
         .nav-link::after {
@@ -275,7 +283,7 @@
             width: 0;
             height: 1px;
             background: var(--neon-pink);
-            transition: 0.4s;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-link:hover::after, .nav-link.active::after {
@@ -360,7 +368,7 @@
         }
 
         .manifesto-card::before {
-            content: 'DESOLATION';
+            content: 'BANKROLL';
             position: absolute;
             bottom: -20px;
             right: -20px;
@@ -402,7 +410,7 @@
             border: 1px solid var(--brd);
             padding: 50px 30px;
             text-align: center;
-            transition: 0.5s;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
@@ -478,6 +486,11 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: var(--glow);
+            transition: 0.3s;
+        }
+
+        .avatar-edit-trigger:hover {
+            transform: rotate(90deg) scale(1.1);
         }
 
         .user-title {
@@ -601,7 +614,7 @@
     <!-- INTRO SEQUENCE -->
     <div id="intro-overlay">
         <div class="intro-glitch-container">
-            <h1 class="intro-title">DESOLATION</h1>
+            <h1 class="intro-title">BANKROLL</h1>
         </div>
         <div class="intro-subtitle">CHEAT FOR SAMP</div>
     </div>
@@ -610,7 +623,7 @@
     <section id="auth-page">
         <div class="auth-container">
             <div class="auth-card">
-                <h2 class="auth-header" id="auth-h">DESOLATION | LOGIN</h2>
+                <h2 class="auth-header" id="auth-h">BANKROLL | LOGIN</h2>
                 
                 <div id="login-form">
                     <div class="input-group">
@@ -651,7 +664,7 @@
 
     <!-- NAVIGATION BAR -->
     <nav>
-        <div class="logo" onclick="switchTab('home')">DESOLATION</div>
+        <div class="logo" onclick="switchTab('home')">BANKROLL</div>
         <div class="nav-links">
             <div class="nav-link active" id="tab-home" onclick="switchTab('home')">
                 <i class="fa-solid fa-house-chimney-crack"></i> <span id="txt-n-home">ГЛАВНАЯ</span>
@@ -769,7 +782,6 @@
     <script>
         /**
          * FIREBASE CORE CONFIGURATION
-         * CONNECTION TO DESOLATION DATABASE
          */
         const firebaseConfig = { 
             apiKey: "AIzaSyBRZVIbOEQtnl4twGv_VK6XUlMK0w5RgX0", 
@@ -787,18 +799,18 @@
 
         const localization = {
             RU: {
-                authL: "DESOLATION | ВХОД",
-                authR: "DESOLATION | РЕГИСТРАЦИЯ",
+                authL: "BANKROLL | ВХОД",
+                authR: "BANKROLL | РЕГИСТРАЦИЯ",
                 navHome: "ГЛАВНАЯ",
                 navProfile: "ПРОФИЛЬ",
                 manifesto: "МАНИФЕСТ ПРОГРАММЫ",
-                desc: "Desolation — это не просто софт, это инструмент тотального контроля. Разработанный для SAMP, наш проект объединяет в себе передовые технологии: кастомный Silent Aim, отрисованный через векторы для идеальной точности, и Wallshot, игнорирующий коллизии. ESP написан на низкоуровневом mimgui с использованием пастельно-розовой неоновой палитры. Каждая строчка кода оптимизирована под высокую частоту кадров. Твой успех — наш приоритет.",
+                desc: "Bankroll — это не просто софт, это инструмент тотального контроля. Разработанный для SAMP, наш проект объединяет в себе передовые технологии: кастомный Silent Aim, отрисованный через векторы для идеальной точности, и Wallshot, игнорирующий коллизии. ESP написан на низкоуровневом mimgui с использованием пастельно-розовой неоновой палитры. Каждая строчка кода оптимизирована под высокую частоту кадров. Твой успех — наш приоритет.",
                 rank: "УРОВЕНЬ ДОСТУПА",
                 status: "СТАТУС ЛИЦЕНЗИИ",
                 joined: "ДАТА РЕГИСТРАЦИИ",
                 hardware: "СИНХРОНИЗАЦИЯ",
                 invites: "ГЕНЕРИРОВАННЫЕ КЛЮЧИ",
-                bossRank: "NONE", // User correction
+                bossRank: "NONE",
                 userRank: "ПОЛЬЗОВАТЕЛЬ",
                 activeStatus: "АКТИВНА",
                 unlimited: "БЕССРОЧНО",
@@ -807,18 +819,18 @@
                 toastReg: "ЛИЧНОСТЬ СОЗДАНА"
             },
             EN: {
-                authL: "DESOLATION | LOGIN",
-                authR: "DESOLATION | REGISTER",
+                authL: "BANKROLL | LOGIN",
+                authR: "BANKROLL | REGISTER",
                 navHome: "DASHBOARD",
                 navProfile: "PROFILE",
                 manifesto: "SOFTWARE MANIFESTO",
-                desc: "Desolation is more than software; it's a tool of total control. Engineered for SAMP, our project integrates advanced technologies: custom vector-based Silent Aim for clinical precision and Wallshot bypassing collisions. The ESP is built on low-level mimgui using a pastel pink neon palette. Every line of code is optimized for high framerates. Your success is our mission.",
+                desc: "Bankroll is more than software; it's a tool of total control. Engineered for SAMP, our project integrates advanced technologies: custom vector-based Silent Aim for clinical precision and Wallshot bypassing collisions. The ESP is built on low-level mimgui using a pastel pink neon palette. Every line of code is optimized for high framerates. Your success is our mission.",
                 rank: "SECURITY CLEARANCE",
                 status: "LICENSE STATUS",
                 joined: "RECORDS CREATED",
                 hardware: "HARDWARE SYNC",
                 invites: "GENERATED ACCESS TOKENS",
-                bossRank: "NONE", // User correction
+                bossRank: "NONE",
                 userRank: "AUTHORIZED USER",
                 activeStatus: "VERIFIED",
                 unlimited: "UNLIMITED",
@@ -857,7 +869,6 @@
             document.getElementById('lang-ru').classList.toggle('active', lang === 'RU');
             document.getElementById('lang-en').classList.toggle('active', lang === 'EN');
             
-            // Apply text
             document.getElementById('txt-n-home').innerText = data.navHome;
             document.getElementById('txt-n-profile').innerText = data.navProfile;
             document.getElementById('txt-m-title').innerText = data.manifesto;
@@ -867,7 +878,6 @@
             document.getElementById('lbl-hardware').innerText = data.hardware;
             document.getElementById('lbl-invites').innerText = data.invites;
 
-            // Typing effect for manifesto
             const desc = document.getElementById('txt-m-desc');
             if(!isTypingManifesto) {
                 isTypingManifesto = true;
@@ -878,7 +888,7 @@
                         desc.innerHTML += data.desc.charAt(i);
                         i++;
                         setTimeout(type, 10);
-                    }
+                    } else { isTypingManifesto = false; }
                 }
                 type();
             } else {
@@ -886,7 +896,7 @@
             }
 
             if(currentUser) {
-                const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+                const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None');
                 document.getElementById('display-rank').innerText = isBoss ? data.bossRank : data.userRank;
                 document.getElementById('display-status').innerText = isBoss ? data.unlimited : data.activeStatus;
             }
@@ -931,7 +941,9 @@
                     uid: count + 1,
                     rank: "USER",
                     invs: [],
-                    avatar: "https://i.imgur.com/6VBx3io.png"
+                    avatar: "https://i.imgur.com/6VBx3io.png",
+                    monthly_count: 0,
+                    last_gen_month: ""
                 };
 
                 await db.ref('users/' + u).set(newUser);
@@ -952,7 +964,7 @@
             document.getElementById('display-joined').innerText = currentUser.date;
             document.getElementById('display-avatar').src = currentUser.avatar || "https://i.imgur.com/6VBx3io.png";
             
-            const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None'); // User correction
+            const isBoss = (currentUID === 'ryodeu' || currentUID === 'dev' || currentUser.rank === 'None');
             document.getElementById('boss-rename-btn').classList.toggle('hidden', !isBoss);
             
             const tokenBox = document.getElementById('display-tokens');
@@ -981,16 +993,40 @@
             }
         }
 
+        /**
+         * ОГРАНИЧЕНИЕ ГЕНЕРАЦИИ (2 в месяц)
+         */
         async function generateInvite() {
-            const code = "DESO-" + Math.random().toString(36).substring(2, 9).toUpperCase();
+            const now = new Date();
+            const currentMonthYear = now.getMonth() + "-" + now.getFullYear();
+            
+            // Проверка смены месяца
+            if (currentUser.last_gen_month !== currentMonthYear) {
+                currentUser.monthly_count = 0;
+                currentUser.last_gen_month = currentMonthYear;
+            }
+
+            // Лимит 2 инвайта
+            if (currentUser.monthly_count >= 2) {
+                notify("LIMIT REACHED: 2 TOKENS PER MONTH");
+                return;
+            }
+
+            const code = "BANK-" + Math.random().toString(36).substring(2, 9).toUpperCase();
             await db.ref('invites/' + code).set({ active: true, gen_by: currentUID });
             
             let list = currentUser.invs || [];
             list.push(code);
-            await db.ref('users/' + currentUID).update({ invs: list });
-            currentUser.invs = list;
+            currentUser.monthly_count++;
+
+            await db.ref('users/' + currentUID).update({ 
+                invs: list, 
+                monthly_count: currentUser.monthly_count,
+                last_gen_month: currentMonthYear
+            });
+            
             syncProfile();
-            notify("TOKEN GENERATED");
+            notify("TOKEN GENERATED (" + currentUser.monthly_count + "/2)");
         }
 
         async function adminRename() {
